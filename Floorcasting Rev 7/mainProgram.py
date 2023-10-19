@@ -8,6 +8,8 @@ import time
 from pause import pauseScreen
 from raycaster import newFrame
 from walking import movement
+from settings import *
+from images import *
 
 # TODO
     # Fix gun reload animation  DONE
@@ -16,7 +18,7 @@ from walking import movement
     # Add a posz and another map for multiple floors
     # Add more rays near the edge of the screen to avoid stair-stepping at the edges
     # Add a sprite system
-    # Add an options menu w/ brightness slider, camera sensitivity, and render scale
+    # Add an options menu w/ brightness slider, camera sensitivity (DONE), and render scale (BUGGED)
     # Make an enemy logic system
     # Add gun sounds  DONE
     # Add multiple weapons
@@ -27,20 +29,6 @@ from walking import movement
 
 pygame.init()
 running = True
-
-# Global variables
-targetFps = 30
-screenResX = 1024
-screenResY = 768
-sens = 0.005  # Camera sensitivity
-renderScale = 0.5  # Scales the render resolution of the game to improve performance
-hres = int(screenResX*renderScale)  # Horizontal resolution of the game render
-halfvres = int(screenResY*renderScale/2)  # Half of the verical resolution of the game render
-screen = pygame.display.set_mode((screenResX, screenResY)) # Resolution of the game window
-
-# Loads a game icon
-icon = pygame.image.load('images/healthRing.png')
-pygame.display.set_icon(icon) 
 
 # Generates the game map (1=brick, 2=wood, 3=bars, 4/5/7=gun_pickup_point, 6=door, 8-10=damaged_walls)
 map1 = numpy.array(((1,6,1,1,5,1,1,1,3,1,1,1,1),
@@ -54,101 +42,9 @@ map1 = numpy.array(((1,6,1,1,5,1,1,1,3,1,1,1,1),
                     (1,0,0,0,9,4,0,0,0,0,0,0,1),
                     (1,7,1,1,1,1,9,1,1,1,1,10,1)))
 
-map2 = numpy.array(((0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)))
-
-map3 = numpy.array(((0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-                    (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)))
-
-# Gun animation images
-  # Pistol firing images
-pistol = pygame.image.load('images/1.png')
-pistol = pygame.transform.scale(pistol, (1000,550))
-pistol1 = pygame.image.load('images/2.png')
-pistol1 = pygame.transform.scale(pistol1, (1000,550))
-pistol2 = pygame.image.load('images/3.png')
-pistol2 = pygame.transform.scale(pistol2, (1000,550))
-pistol3 = pygame.image.load('images/4.png')
-pistol3 = pygame.transform.scale(pistol3, (1000,550))
-pistol4 = pygame.image.load('images/5.png')
-pistol4 = pygame.transform.scale(pistol4, (1000,550))  
-  # Reload animation images
-reloadEmpty = pygame.image.load('images/reloadEmpty.png')
-reloadEmpty = pygame.transform.scale(reloadEmpty, (1000,550))    
-reload1 = pygame.image.load('images/reload1.png')
-reload1 = pygame.transform.scale(reload1, (1000,550))
-reload2 = pygame.image.load('images/reload2.png')
-reload2 = pygame.transform.scale(reload2, (1000,550))
-reload3 = pygame.image.load('images/reload3.png')
-reload3 = pygame.transform.scale(reload3, (1000,550))
-reload4 = pygame.image.load('images/reload4.png')
-reload4 = pygame.transform.scale(reload4, (1000,550))
-reload5 = pygame.image.load('images/reload5.png')
-reload5 = pygame.transform.scale(reload5, (1000,550))
-reload6 = pygame.image.load('images/reload6.png')
-reload6 = pygame.transform.scale(reload6, (1000,550))
-reload7 = pygame.image.load('images/reload7.png')
-reload7 = pygame.transform.scale(reload7, (1000,550))
-reload8 = pygame.image.load('images/reload8.png')
-reload8 = pygame.transform.scale(reload8, (1000,550))
-reload9 = pygame.image.load('images/reload9.png')
-reload9 = pygame.transform.scale(reload9, (1000,550))
-reload10 = pygame.image.load('images/reload10.png')
-reload10 = pygame.transform.scale(reload10, (1000,550))
-reload11 = pygame.image.load('images/reload11.png')
-reload11 = pygame.transform.scale(reload11, (1000,550))
-reload12 = pygame.image.load('images/reload12.png')
-reload12 = pygame.transform.scale(reload12, (1000,550))
-reload13 = pygame.image.load('images/reload13.png')
-reload13 = pygame.transform.scale(reload13, (1000,550))
-
-# Wall textures (It would be great to use a dictionary here, but that is unsupported by numba.)
-wallBrick = pygame.surfarray.array3d(pygame.image.load('images/wallBrick.jpg'))
-wallBrickDamaged = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged.jpg'))
-wallBrickDamaged1 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged1.jpg'))
-wallWood = pygame.surfarray.array3d(pygame.image.load('images/wallWood.jpg'))
-wallBars = pygame.surfarray.array3d(pygame.image.load('images/bars.png'))
-wallPpsh = pygame.surfarray.array3d(pygame.image.load('images/wallPpsh.jpg'))
-wallShotgun = pygame.surfarray.array3d(pygame.image.load('images/wallShotgun.jpg'))
-wallDoor = pygame.surfarray.array3d(pygame.image.load('images/wallDoor.png'))
-wallPistol = pygame.surfarray.array3d(pygame.image.load('images/wallPistol.png'))
-wallGrafitti = pygame.surfarray.array3d(pygame.image.load('images/wallGrafitti.png'))
-
 wallResX, wallResY = 200, 200  # Dimensions of the wall texture in pixels
-
-# Loads an image for the floor
-floor = pygame.surfarray.array3d(pygame.image.load('images/floor.jpg'))
 floorResX, floorResY = 240, 240  # Dimensions of the floor texture in pixels
 floorScale = 1.5  # Sets the scale of your rendered floor texture
-
-#Loads an image for the ceiling
-ceiling = pygame.surfarray.array3d(pygame.image.load('images/ceiling.jpg'))
 
 # Creates HUD text
 hudText = pygame.font.SysFont('agencyfb', 45)
@@ -184,17 +80,6 @@ def main():
     # Defines an idle animation for the gun
     idleAnimation = 0
     idleDir = 1
-
-    # Loads an image for the crosshair
-    crosshair = pygame.image.load('images/crosshair.png')
-    crosshairSize = 35
-    crosshair = pygame.transform.scale(crosshair, (crosshairSize, crosshairSize))
-    
-    healthRing = pygame.image.load('images/healthRing.png')
-    healthRingTitle = pygame.image.load('images/healthRingTitle.png')
-    titleGradient = pygame.image.load('images/titleScreen.png')
-    titleBackground = pygame.image.load('images/titleBackground.png')
-    textBox = pygame.image.load('images/textBox.png')
     
     points = 500
     
@@ -248,9 +133,11 @@ def main():
             pause = 1
             while pause == 1:
                 if setUpdate == True:
-                    running, pause, newHres, newHalfvres, newSens, newScale = pauseScreen(pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, newScale, newSens, screenResX, screenResY)
+                    running, pause, newHres, newHalfvres, newSens, newScale = pauseScreen(
+                        pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, newScale, newSens, screenResX, screenResY)
                 else:
-                    running, pause, newHres, newHalfvres, newSens, newScale = pauseScreen(pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, renderScale, sens, screenResX, screenResY)
+                    running, pause, newHres, newHalfvres, newSens, newScale = pauseScreen(
+                        pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, renderScale, sens, screenResX, screenResY)
                 setUpdate = True
                 frameUpdate = True
             pause = 0
@@ -285,16 +172,17 @@ def titleScreen(surface, titleImage, keys, start, titleGradient, titleBackground
     running = True
     
     screen.fill((255,0,0))
-    screen.blit(titleBackground, (0, 0), (200, 100, 1024, 768))
-    screen.blit(titleGradient, (0, 0), (0, 0, 1024, 768))
-    screen.blit(titleImage, (0, 0), (40, 65, 1024, 768))
-    screen.blit(textBox, (0, 0), (90, 0, 1024, 768))
+    screen.blit(titleBackground, (0, 0), (200, 100, screenResX, screenResY))
+    screen.blit(titleGradient, (0, 0), (0, 0, screenResX, screenResY))
+    screen.blit(titleImage, (0, 0), (40, 65, screenResX, screenResY))
+    screen.blit(textBox, (0, 0), (90, 0, screenResX, screenResY))
     
     mouse = pygame.mouse.get_pos()
     
     if 50<mouse[0]<360 and 430<mouse[1]<500:
         ticker = True
-        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500), (35, 430), (360, 430), (360, 500)))  # Draws title screen button lighter on mouse rollover
+        # Draws title screen button lighter on mouse rollover
+        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500), (35, 430), (360, 430), (360, 500)))
         buttonMouse = pygame.event.get()
         if pygame.mouse.get_pressed()[0]:  # Detects if you click the button
             start = True
@@ -305,14 +193,16 @@ def titleScreen(surface, titleImage, keys, start, titleGradient, titleBackground
     
     if 50<mouse[0]<360 and 430+100<mouse[1]<500+100:
         ticker = True
-        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))  # Draws title screen button lighter on mouse rollover
+        # Draws title screen button lighter on mouse rollover
+        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))
     else:
         pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100))) # Draws title screen button
     screen.blit(hudText.render('Options', False, (10, 10, 10)), (80, 435+100))
 
     if 50<mouse[0]<360 and 430+200<mouse[1]<500+200:
         ticker = True
-        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+200), (35, 430+200), (360, 430+200), (360, 500+200)))  # Draws title screen button lighter on mouse rollover
+        # Draws title screen button lighter on mouse rollover
+        pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+200), (35, 430+200), (360, 430+200), (360, 500+200)))
         buttonMouse = pygame.event.get()
         if pygame.mouse.get_pressed()[0]:  # Detects if you click the button       
             running = False
@@ -345,13 +235,14 @@ def hud(surface, gunBob, gunBobDirection, crosshair, crosshairSize, currentGun, 
         if idleAnimation > 0:
             idleAnimation = idleAnimation - 1
     
-    currentGun, shooting, magAmmo, totalAmmo, reloading, channelNum = gunDraw(timer, currentGun, surface, gunBob, keys, idleAnimation, shooting, magAmmo, totalAmmo, reloading, channelNum)                
+    currentGun, shooting, magAmmo, totalAmmo, reloading, channelNum = gunDraw(
+        timer, currentGun, surface, gunBob, keys, idleAnimation, shooting, magAmmo, totalAmmo, reloading, channelNum)
 
     # Draws crosshair
-    surface.blit(crosshair, (0, 0), (gunBob/2-screenResX/2 + crosshairSize/2, -abs(gunBob)/4-screenResY/2 + crosshairSize/2, 1024, 768))
+    surface.blit(crosshair, (0, 0), (gunBob/2-screenResX/2 + crosshairSize/2, -abs(gunBob)/4-screenResY/2 + crosshairSize/2, screenResX, screenResY))
 
     # Draws ammo HUD in lower right part of the screen
-    pygame.draw.polygon(surface, (10, 10, 10), ((screenResX-5, screenResY-105), (screenResX-5, screenResY-155), (screenResX-175, screenResY-155), (screenResX-155, screenResY-105)))  # Shadow
+    pygame.draw.polygon(surface, (10, 10, 10), ((screenResX-5, screenResY-105), (screenResX-5, screenResY-155),(screenResX-175, screenResY-155), (screenResX-155, screenResY-105)))  # Shadow
     pygame.draw.polygon(surface, (50, 50, 50), ((screenResX-10, screenResY-110), (screenResX-10, screenResY-160), (screenResX-180, screenResY-160), (screenResX-160, screenResY-110)))  # Draws the HUD rectangle
     surface.blit(hudText.render(f'{magAmmo} | {totalAmmo}', False, (10, 10, 10)), (screenResX-150, screenResY-160))  # Shadow
     surface.blit(hudText.render(f'{magAmmo} | {totalAmmo}', False, (150, 25, 25)), (screenResX-155, screenResY-165))  # Draws the magAmmo text
@@ -371,7 +262,7 @@ def hud(surface, gunBob, gunBobDirection, crosshair, crosshairSize, currentGun, 
             pygame.mixer.Channel(13).play(pygame.mixer.Sound('sounds/purchase.mp3'))
     
     # Draws health bar
-    surface.blit(healthRing, (0, 0), (-screenResX+60, -screenResY+152, 1024, 768))
+    surface.blit(healthRing, (0, 0), (-screenResX+60, -screenResY+152, screenResX, screenResY))
 
     # Black bars at the top and bottom of the screen
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, screenResX, 100))
@@ -416,127 +307,100 @@ def gunDraw(timer, currentGun, surface, gunBob, keys, idleAnimation, shooting, m
     # Draws the gun on the screen (0-4 is the shooting animation) (5-13 is the reload animation)
     if magAmmo == 0 and totalAmmo == 0 and shooting == 0:
         gun = pygame.transform.rotate(reloadEmpty, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))    
+
+    # Pistol fire animation
     elif currentGun == 0:
         gun = pygame.transform.rotate(pistol, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 1:
         gun = pygame.transform.rotate(pistol1, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 2:
         gun = pygame.transform.rotate(pistol2, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768)) 
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 3:
         gun = pygame.transform.rotate(pistol3, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768)) 
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 4:
         gun = pygame.transform.rotate(pistol4, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
+    # Pistol reload animation
     elif currentGun == 5:
         gun = pygame.transform.rotate(reload13, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 6:
         gun = pygame.transform.rotate(reload12, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 7:
         gun = pygame.transform.rotate(reload12, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 8:
         gun = pygame.transform.rotate(reload11, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 9:
         gun = pygame.transform.rotate(reload11, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 10:
         gun = pygame.transform.rotate(reload10, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))     
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 11:
         gun = pygame.transform.rotate(reload10, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))        
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 12:
         gun = pygame.transform.rotate(reload9, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-        
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 13:
         gun = pygame.transform.rotate(reload9, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 14:
         gun = pygame.transform.rotate(reload8, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 15:
         gun = pygame.transform.rotate(reload8, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 16:
         gun = pygame.transform.rotate(reload7, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 17:
         gun = pygame.transform.rotate(reload7, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 18:
         gun = pygame.transform.rotate(reload6, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 19:
         gun = pygame.transform.rotate(reload6, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768)) 
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 20:
         gun = pygame.transform.rotate(reload5, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 21:
         gun = pygame.transform.rotate(reload5, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 22:
         gun = pygame.transform.rotate(reload4, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 23:
         gun = pygame.transform.rotate(reload4, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 24:
         gun = pygame.transform.rotate(reload3, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 25:
         gun = pygame.transform.rotate(reload3, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 26:
         gun = pygame.transform.rotate(reload2, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 27:
         gun = pygame.transform.rotate(reload2, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 28:
         gun = pygame.transform.rotate(reload1, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))    
-    
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))
     elif currentGun == 29:
         gun = pygame.transform.rotate(reload1, gunBob/16)  # Rotates the pistol when the player turns
-        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, 1024, 768))      
+        surface.blit(gun, (0, 0), (gunBob-50, -abs(gunBob)/4-150 + idleAnimation/2, screenResX, screenResY))      
         reloading = 0
         currentGun = 0
         
