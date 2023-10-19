@@ -120,7 +120,7 @@ def main():
                         pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, newScale, newSens, screenResX, screenResY)
                 else:
                     running, pause, newHres, newHalfvres, newSens, newScale = pauseScreen(
-                        pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, renderScale, sens, screenResX, screenResY)
+                        pause, titleBackground, titleGradient, healthRingTitle, textBox, ticker, screen, hudText, render_scale, sens, screenResX, screenResY)
                 setUpdate = True
                 frameUpdate = True
             pause = 0
