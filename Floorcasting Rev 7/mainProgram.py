@@ -10,6 +10,7 @@ from raycaster import newFrame
 from walking import movement
 from settings import *
 from images import *
+from maps import *
 
 # TODO
     # Fix gun reload animation  DONE
@@ -30,27 +31,10 @@ from images import *
 pygame.init()
 running = True
 
-# Generates the game map (1=brick, 2=wood, 3=bars, 4/5/7=gun_pickup_point, 6=door, 8-10=damaged_walls)
-map1 = numpy.array(((1,6,1,1,5,1,1,1,3,1,1,1,1),
-                    (1,0,1,1,0,0,0,0,0,0,0,0,9),
-                    (1,0,0,3,0,0,0,0,0,2,1,0,1),
-                    (1,0,1,1,0,0,0,2,2,1,0,0,1),
-                    (8,0,1,0,0,1,1,0,0,1,0,1,1),
-                    (1,0,1,0,0,0,0,0,0,10,0,0,1),
-                    (1,0,1,0,1,0,2,2,0,1,1,0,1),
-                    (1,0,1,0,1,1,2,0,0,0,1,0,1),
-                    (1,0,0,0,9,4,0,0,0,0,0,0,1),
-                    (1,7,1,1,1,1,9,1,1,1,1,10,1)))
-
-wallResX, wallResY = 200, 200  # Dimensions of the wall texture in pixels
-floorResX, floorResY = 240, 240  # Dimensions of the floor texture in pixels
-floorScale = 1.5  # Sets the scale of your rendered floor texture
-
 # Creates HUD text
 hudText = pygame.font.SysFont('agencyfb', 45)
 pointText = pygame.font.SysFont('agencyfb', 25)
-promptText = pygame.font.SysFont('couriernew', 18)   
-    
+promptText = pygame.font.SysFont('couriernew', 18)
 
 def main():
     frame = numpy.random.uniform(0, 0, (hres, halfvres * 2, 3)) # Where the game render will be stored before being sent to pygame
@@ -67,7 +51,7 @@ def main():
     pygame.mixer.music.play(-1)
     ticker = False
     channelNum = 0
-    
+
     # Variables to define various gun actions
     gunBob = 0  # Movement animation for the gun
     gunBobDirection = 1  # Direction of the movement animation
@@ -76,7 +60,7 @@ def main():
     magAmmo = 7  # Amount of ammo in the magazine
     totalAmmo = 21  # Total ammo the player has outside of the magazine
     reloading = 0  # Is the player trying to reload?
-    
+
     # Defines an idle animation for the gun
     idleAnimation = 0
     idleDir = 1
@@ -122,10 +106,9 @@ def main():
             frame = newFrame(frame, posx, posy, rot, mod, hres, map1, halfvres, wallResX, wallResY, wallBrick, wallWood, wallBars, wallPpsh, wallShotgun,
                          wallDoor, wallPistol, wallGrafitti, wallBrickDamaged, wallBrickDamaged1, floorScale, floorResX, floorResY, floor, ceiling)
 
-        # Converts the numpy frame into a surface
-        # displayable by pygame (with 256 bit color depth)
+        # Converts the numpy frame into a surface displayable by pygame (with 256-bit color depth)
         surface = pygame.surfarray.make_surface(frame * 255)
-        # Scales game up to 800x600
+        # Scales game up to the full resolution
         surface = pygame.transform.scale(surface, (screenResX, screenResY))
 
         # Starts pause screen
@@ -170,8 +153,7 @@ def main():
 def titleScreen(surface, titleImage, keys, start, titleGradient, titleBackground, textBox, ticker):       
     start = False
     running = True
-    
-    screen.fill((255,0,0))
+
     screen.blit(titleBackground, (0, 0), (200, 100, screenResX, screenResY))
     screen.blit(titleGradient, (0, 0), (0, 0, screenResX, screenResY))
     screen.blit(titleImage, (0, 0), (40, 65, screenResX, screenResY))
