@@ -1,7 +1,7 @@
 # This is the function that handles the pause screen
 import pygame
 
-def pauseScreen(pause, titleBackground, titleGradient, titleImage, textBox, ticker, screen, hudText, render_scale, sens, screenResX, screenResY):
+def pauseScreen(pause, titleBackground, titleGradient, titleImage, textBox, ticker, screen, hudText, render_scale, sens, SCREEN_RES):
     running = True
 
     pygame.event.get()
@@ -52,11 +52,11 @@ def pauseScreen(pause, titleBackground, titleGradient, titleImage, textBox, tick
         pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+200), (35, 430+200), (360, 430+200), (360, 500+200)))  # Draws pause screen button
     screen.blit(hudText.render('Exit to Desktop', False, (10, 10, 10)), (80, 435+200))      
     
-    if ticker != True:
+    if not ticker:
         pygame.mixer.Channel(0).play(pygame.mixer.Sound('sounds/tick.mp3'))
 
-    newHres = int(screenResX * render_scale)  # Horizontal resolution of the game render
-    newHalfvres = int(screenResY * render_scale / 2)  # Half of the verical resolution of the game render
+    new_hres = int(SCREEN_RES[0] * render_scale)  # Horizontal resolution of the game render
+    new_halfvres = int(SCREEN_RES[1]* render_scale / 2)  # Half of the vertical resolution of the game render
     
     pygame.display.update()
-    return running, pause, newHres, newHalfvres, sens, render_scale
+    return running, pause, new_hres, new_halfvres, sens, render_scale

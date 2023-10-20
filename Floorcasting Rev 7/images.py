@@ -2,7 +2,7 @@ import pygame
 from settings import PISTOL_SIZE
 
 # Gun animation images
-  # Pistol firing images
+# Pistol firing images
 pistol = pygame.image.load('images/1.png')
 pistol = pygame.transform.scale(pistol, PISTOL_SIZE)
 pistol1 = pygame.image.load('images/2.png')
@@ -13,7 +13,7 @@ pistol3 = pygame.image.load('images/4.png')
 pistol3 = pygame.transform.scale(pistol3, PISTOL_SIZE)
 pistol4 = pygame.image.load('images/5.png')
 pistol4 = pygame.transform.scale(pistol4, PISTOL_SIZE)
-  # Reload animation images
+# Reload animation images
 reloadEmpty = pygame.image.load('images/reloadEmpty.png')
 reloadEmpty = pygame.transform.scale(reloadEmpty, PISTOL_SIZE)
 reload1 = pygame.image.load('images/reload1.png')
@@ -44,38 +44,38 @@ reload13 = pygame.image.load('images/reload13.png')
 reload13 = pygame.transform.scale(reload13, PISTOL_SIZE)
 
 # Wall textures (It would be great to use a dictionary here, but that is unsupported by numba.)
-wallBrick = pygame.image.load('images/wallBrick.jpg').convert()
-wallBrick.set_colorkey((0,0,0))
-wallBrick = pygame.surfarray.array3d(wallBrick)
+WALL_BRICK = pygame.image.load('images/wallBrick.jpg').convert()
+WALL_BRICK.set_colorkey((0,0,0))
+WALL_BRICK = pygame.surfarray.array3d(WALL_BRICK)
 
-wallBars = pygame.image.load('images/bars.png').convert()
-wallBars.set_colorkey((0,0,0))
-wallBars = pygame.surfarray.array3d(wallBars)
+WALL_BARS = pygame.image.load('images/bars.png').convert()
+WALL_BARS.set_colorkey((0,0,0))
+WALL_BARS = pygame.surfarray.array3d(WALL_BARS)
 
-wallBrickDamaged = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged.jpg'))
-wallBrickDamaged1 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged1.jpg'))
-wallWood = pygame.surfarray.array3d(pygame.image.load('images/wallWood.jpg'))
-wallPpsh = pygame.surfarray.array3d(pygame.image.load('images/wallPpsh.jpg'))
-wallShotgun = pygame.surfarray.array3d(pygame.image.load('images/wallShotgun.jpg'))
-wallDoor = pygame.surfarray.array3d(pygame.image.load('images/wallDoor.png'))
-wallPistol = pygame.surfarray.array3d(pygame.image.load('images/wallPistol.png'))
-wallGrafitti = pygame.surfarray.array3d(pygame.image.load('images/wallGrafitti.png'))
+WALL_BRICK_DAMAGE1 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged.jpg'))
+WALL_BRICK_DAMAGE2 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged1.jpg'))
+WALL_WOOD = pygame.surfarray.array3d(pygame.image.load('images/wallWood.jpg'))
+WALL_PPSH = pygame.surfarray.array3d(pygame.image.load('images/wallPpsh.jpg'))
+WALL_SHOTGUN = pygame.surfarray.array3d(pygame.image.load('images/wallShotgun.jpg'))
+WALL_DOOR = pygame.surfarray.array3d(pygame.image.load('images/wallDoor.png'))
+WALL_PISTOL = pygame.surfarray.array3d(pygame.image.load('images/wallPistol.png'))
+WALL_GRAFFITI = pygame.surfarray.array3d(pygame.image.load('images/wallGrafitti.png'))
 
 # Loads an image for the floor
 floor = pygame.surfarray.array3d(pygame.image.load('images/floor.jpg'))
-#Loads an image for the ceiling
+# Loads an image for the ceiling
 ceiling = pygame.surfarray.array3d(pygame.image.load('images/ceiling.jpg'))
 
 # Loads an image for the crosshair
 crosshair = pygame.image.load('images/crosshair.png')
-crosshairSize = 35
-crosshair = pygame.transform.scale(crosshair, (crosshairSize, crosshairSize))
+crosshair_size = 35
+crosshair = pygame.transform.scale(crosshair, (crosshair_size, crosshair_size))
 
-healthRing = pygame.image.load('images/healthRing.png')
-healthRingTitle = pygame.image.load('images/healthRingTitle.png')
-titleGradient = pygame.image.load('images/titleScreen.png')
-titleBackground = pygame.image.load('images/titleBackground.png')
-textBox = pygame.image.load('images/textBox.png')
+health_ring = pygame.image.load('images/healthRing.png')
+health_ring_title = pygame.image.load('images/healthRingTitle.png')
+title_gradient = pygame.image.load('images/titleScreen.png')
+title_background = pygame.image.load('images/titleBackground.png')
+text_box = pygame.image.load('images/textBox.png')
 
 # Loads a game icon
 icon = pygame.image.load('images/healthRing.png')

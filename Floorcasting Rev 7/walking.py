@@ -1,8 +1,8 @@
 import pygame
 import numpy
 
+
 def movement(posx, posy, rot, keys, timer, gunBob, map1, sens):
-    wrongDirection = 0  # Stores if the gunBob is in the wrong direction of where the player is turning
     if keys[pygame.K_LEFT] or keys[ord('a')]:  # Detects if the 'a' or left arrow is pressed
         rot = rot - sens*timer  # Rotates the player
         if gunBob > 0:
@@ -60,4 +60,4 @@ def movement(posx, posy, rot, keys, timer, gunBob, map1, sens):
         pygame.mixer.Channel(10).fadeout(250)
         pygame.mixer.Channel(11).fadeout(250)
 
-    return posx, posy, rot, gunBob # Outputs the player's position and rotation
+    return posx, posy, rot, gunBob  # Outputs the player's position and rotation
