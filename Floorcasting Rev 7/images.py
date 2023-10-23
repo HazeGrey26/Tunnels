@@ -45,11 +45,11 @@ reload13 = pygame.transform.scale(reload13, PISTOL_SIZE)
 
 # Wall textures (It would be great to use a dictionary here, but that is unsupported by numba.)
 WALL_BRICK = pygame.image.load('images/wallBrick.jpg').convert()
-WALL_BRICK.set_colorkey((0,0,0))
+WALL_BRICK.set_colorkey((0, 0, 0))
 WALL_BRICK = pygame.surfarray.array3d(WALL_BRICK)
 
 WALL_BARS = pygame.image.load('images/bars.png').convert()
-WALL_BARS.set_colorkey((0,0,0))
+WALL_BARS.set_colorkey((0, 0, 0))
 WALL_BARS = pygame.surfarray.array3d(WALL_BARS)
 
 WALL_BRICK_DAMAGE1 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged.jpg'))

@@ -3,7 +3,7 @@ from numba import njit  # Uses optimized math to increase performance
 
 @njit()  # This is a decorator that denotes njit optimizations (from numba)
 def newFrame(frame, posx, posy, rot, mod, hres, currentMap, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
-                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, floorScale, FLOOR_RES, floor, ceiling):
+             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, floorScale, FLOOR_RES, floor, ceiling):
     for i in range(hres):
         # Casts rays horizontally from -30 degrees to 30 degrees
         rot_i = rot + numpy.deg2rad(i/mod - 30)

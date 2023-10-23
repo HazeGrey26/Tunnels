@@ -12,4 +12,4 @@ screen = pygame.display.set_mode((SCREEN_RES[0], SCREEN_RES[1]))  # Resolution o
 
 WALL_RES = (200, 200)  # Dimensions of the wall texture in pixels
 FLOOR_RES = (240, 240)  # Dimensions of the floor texture in pixels
-floorScale = 1.5  # Sets the scale of your rendered floor texture
+FLOOR_SCALE = 1.5  # Sets the scale of your rendered floor texture

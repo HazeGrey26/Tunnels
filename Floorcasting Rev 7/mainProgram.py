@@ -1,11 +1,8 @@
-import pygame
-import numpy  # Helps with raycasting
-from numba import njit  # Uses optimized math to increase performance
 from time import time as timer
 import time
 
 # My imported functions:
-from pause import pauseScreen
+from pause import pause_screen
 from raycaster import newFrame
 from walking import movement
 from settings import *
@@ -41,7 +38,7 @@ def main():
     # Where the game render will be stored before being sent to pygame
     frame = numpy.random.uniform(0, 0, (hres, halfvres * 2, 3))
     
-    # Variable to set the player's movements to be independent from the framerate
+    # Variable to set the player's movements to be independent of the frame rate
     clock = pygame.time.Clock()
 
     mod = hres / 60  # Scales to a 60 degrees field of view
@@ -59,7 +56,7 @@ def main():
     current_gun = 0  # Current image of the gun animation that is rendered
     shooting = 0  # Is the player trying to shoot?
     mag_ammo = 7  # Amount of ammo in the magazine
-    total_ammo = 21  # Total ammo the player has outside of the magazine
+    total_ammo = 21  # Total ammo the player has outside the magazine
     reloading = 0  # Is the player trying to reload?
 
     # Defines an idle animation for the gun
@@ -73,12 +70,11 @@ def main():
     surface = pygame.surfarray.make_surface(frame * 255)
     surface = pygame.transform.scale(surface, (SCREEN_RES[0], SCREEN_RES[1]))
     
-    pygame.display.set_caption("Aaron's Raycasting Demo")
+    pygame.display.set_caption("Aaron's Ray Casting Demo")
     
     while not start:
         pygame.event.get()  # Prevents the game from going non-responsive
-        start, running = title_screen(surface, health_ring_title, pygame.key.get_pressed(), start, title_gradient,
-                                      title_background, text_box, ticker)
+        start, running = title_screen(health_ring_title, title_gradient, title_background, text_box, ticker)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -93,7 +89,7 @@ def main():
     set_update = False
     frame_update = False
     while running:
-        millisecondsStart = timer() * 1000
+        milliseconds = timer() * 1000
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,10 +98,10 @@ def main():
         if frame_update:
             new_mod = new_hres / 60  # Scales to a 60 degrees field of view
             frame = newFrame(frame, posx, posy, rot, new_mod, new_hres, map1, new_halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
-                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, floorScale, FLOOR_RES, floor, ceiling)
+                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling)
         else:
             frame = newFrame(frame, posx, posy, rot, mod, hres, map1, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
-                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, floorScale, FLOOR_RES, floor, ceiling)
+                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling)
 
         # Converts the numpy frame into a surface displayable by pygame (with 256-bit color depth)
         surface = pygame.surfarray.make_surface(frame * 255)
@@ -117,10 +113,10 @@ def main():
             pause = True
             while pause:
                 if set_update:
-                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pauseScreen(
+                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pause_screen(
                         pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, new_scale, new_sens, SCREEN_RES)
                 else:
-                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pauseScreen(
+                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pause_screen(
                         pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, render_scale, sens, SCREEN_RES)
                 set_update = True
                 frame_update = True
@@ -141,24 +137,24 @@ def main():
         
         # Displays frames per second
         fps = int(clock.get_fps()/2)
-        pygame.display.set_caption("Aaron's Raycasting Demo    fps = " + str(fps))
+        pygame.display.set_caption("Aaron's Ray Casting Demo    fps = " + str(fps))
         
         # Sets the frame timing for a capped fps
-        fps_delay = (1000/TARGET_FPS - (timer() * 1000 - millisecondsStart))/1000
+        fps_delay = (1000/TARGET_FPS - (timer() * 1000 - milliseconds))/1000
         print(int(1000/(33.34-(fps_delay*1000))))
 
         if fps_delay > 0:
             time.sleep(fps_delay)  # Caps the game fps
 
 
-def title_screen(surface, titleImage, keys, start, titleGradient, title_background, textBox, ticker):       
+def title_screen(title_image, title_gradient, title_background, text_box, ticker):
     start = False
     running = True
 
     screen.blit(title_background, (0, 0), (200, 100, SCREEN_RES[0], SCREEN_RES[1]))
-    screen.blit(titleGradient, (0, 0), (0, 0, SCREEN_RES[0], SCREEN_RES[1]))
-    screen.blit(titleImage, (0, 0), (40, 65, SCREEN_RES[0], SCREEN_RES[1]))
-    screen.blit(textBox, (0, 0), (90, 0, SCREEN_RES[0], SCREEN_RES[1]))
+    screen.blit(title_gradient, (0, 0), (0, 0, SCREEN_RES[0], SCREEN_RES[1]))
+    screen.blit(title_image, (0, 0), (40, 65, SCREEN_RES[0], SCREEN_RES[1]))
+    screen.blit(text_box, (0, 0), (90, 0, SCREEN_RES[0], SCREEN_RES[1]))
     
     mouse = pygame.mouse.get_pos()
     
@@ -178,7 +174,7 @@ def title_screen(surface, titleImage, keys, start, titleGradient, title_backgrou
         # Draws title screen button lighter on mouse rollover
         pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))
     else:
-        pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100))) # Draws title screen button
+        pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))  # Draws title screen button
     screen.blit(hud_text.render('Options', False, (10, 10, 10)), (80, 435+100))
 
     if 50 < mouse[0] < 360 and 430+200 < mouse[1] < 500+200:
@@ -200,8 +196,8 @@ def title_screen(surface, titleImage, keys, start, titleGradient, title_backgrou
     return start, running
     
 
-def hud(surface, gun_bob, crosshair, crosshairSize, current_gun, idle_anim, idle_dir,
-        keys, timer, shooting, mag_ammo, total_ammo, reloading, healthRing, posx, posy, points, channel_num):
+def hud(surface, gun_bob, crosshair, crosshair_size, current_gun, idle_anim, idle_dir,
+        keys, timer, shooting, mag_ammo, total_ammo, reloading, health_ring, posx, posy, points, channel_num):
     # Applies an idle animation to the gun
     if gun_bob == 0:
         if abs(idle_anim) <= 14:
@@ -220,10 +216,10 @@ def hud(surface, gun_bob, crosshair, crosshairSize, current_gun, idle_anim, idle
         timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, mag_ammo, total_ammo, reloading, channel_num)
 
     # Draws crosshair
-    surface.blit(crosshair, (0, 0), (gun_bob/2-SCREEN_RES[0]/2 + crosshairSize/2, -abs(gun_bob)/4-SCREEN_RES[1]/2 + crosshairSize/2, SCREEN_RES[0], SCREEN_RES[1]))
+    surface.blit(crosshair, (0, 0), (gun_bob/2-SCREEN_RES[0]/2 + crosshair_size/2, -abs(gun_bob)/4-SCREEN_RES[1]/2 + crosshair_size/2, SCREEN_RES[0], SCREEN_RES[1]))
 
     # Draws ammo HUD in lower right part of the screen
-    pygame.draw.polygon(surface, (10, 10, 10), ((SCREEN_RES[0]-5, SCREEN_RES[1]-105), (SCREEN_RES[0]-5, SCREEN_RES[1]-155),(SCREEN_RES[0]-175, SCREEN_RES[1]-155), (SCREEN_RES[0]-155, SCREEN_RES[1]-105)))  # Shadow
+    pygame.draw.polygon(surface, (10, 10, 10), ((SCREEN_RES[0]-5, SCREEN_RES[1]-105), (SCREEN_RES[0]-5, SCREEN_RES[1]-155), (SCREEN_RES[0]-175, SCREEN_RES[1]-155), (SCREEN_RES[0]-155, SCREEN_RES[1]-105)))  # Shadow
     pygame.draw.polygon(surface, (50, 50, 50), ((SCREEN_RES[0]-10, SCREEN_RES[1]-110), (SCREEN_RES[0]-10, SCREEN_RES[1]-160), (SCREEN_RES[0]-180, SCREEN_RES[1]-160), (SCREEN_RES[0]-160, SCREEN_RES[1]-110)))  # Draws the HUD rectangle
     surface.blit(hud_text.render(f'{mag_ammo} | {total_ammo}', False, (10, 10, 10)), (SCREEN_RES[0]-150, SCREEN_RES[1]-160))  # Shadow
     surface.blit(hud_text.render(f'{mag_ammo} | {total_ammo}', False, (150, 25, 25)), (SCREEN_RES[0]-155, SCREEN_RES[1]-165))  # Draws the mag_ammo text
@@ -243,7 +239,7 @@ def hud(surface, gun_bob, crosshair, crosshairSize, current_gun, idle_anim, idle
             pygame.mixer.Channel(13).play(pygame.mixer.Sound('sounds/purchase.mp3'))
     
     # Draws health bar
-    surface.blit(healthRing, (0, 0), (-SCREEN_RES[0]+60, -SCREEN_RES[1]+152, SCREEN_RES[0], SCREEN_RES[1]))
+    surface.blit(health_ring, (0, 0), (-SCREEN_RES[0]+60, -SCREEN_RES[1]+152, SCREEN_RES[0], SCREEN_RES[1]))
 
     # Black bars at the top and bottom of the screen
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, SCREEN_RES[0], 100))
