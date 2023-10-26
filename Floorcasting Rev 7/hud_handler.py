@@ -39,6 +39,7 @@ def hud(surface, gun_bob, crosshair, crosshair_size, keys, timer, mag_ammo, tota
         if keys[ord('f')] and points >= 250 and total_ammo < 56:
             total_ammo = 56
             points = points - 250
+            total_ammo = MAX_AMMO
             pygame.mixer.Channel(13).play(pygame.mixer.Sound('sounds/purchase.mp3'))
 
     # Draws health bar
@@ -48,4 +49,4 @@ def hud(surface, gun_bob, crosshair, crosshair_size, keys, timer, mag_ammo, tota
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, SCREEN_RES[0], 100))
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, SCREEN_RES[1] - 100, SCREEN_RES[0], 100))
 
-    return points
+    return points, total_ammo

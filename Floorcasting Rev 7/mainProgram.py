@@ -99,27 +99,6 @@ def main():
     while running:
         milliseconds = timer() * 1000
 
-        # Event Handler
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            # Gets mouse open and locks mouse to the center of the screen
-            if event.type == pygame.MOUSEMOTION:
-                mouse_pos = pygame.mouse.get_pos()
-                mouse_delta = (mouse_pos[0] - (SCREEN_RES[0] / 2), mouse_pos[1] - (SCREEN_RES[1] / 2))
-                #print(mouse_delta)
-                rot = rot + (mouse_delta[0] * MOUSE_SENSITIVITY / 100)
-                if pygame.mouse.get_pos() != (SCREEN_RES[0] / 2, SCREEN_RES[1] / 2):
-                    if gun_bob > -120:
-                        gun_bob += mouse_delta[0] / 5
-                    elif gun_bob < 120:
-                        gun_bob -= mouse_delta[0] / 5
-                    pygame.mouse.set_pos((SCREEN_RES[0] / 2, SCREEN_RES[1] / 2))
-            if event.type == pygame.MOUSEBUTTONDOWN and click_reset:
-                mouse_down = True
-                click_reset = False
-            else:
-                mouse_down = False
         # Returns the pistol to the center
         if gun_bob <= 12:
             gun_bob = gun_bob + 12
@@ -164,12 +143,12 @@ def main():
         #print(vertical_angle)
 
         # Draws the gun
-        current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir = gun_draw(
+        current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot = gun_draw(
             clock.tick(), current_gun, surface, gun_bob, pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
-            total_ammo, reloading, channel_num, mouse_down, idle_dir)
+            total_ammo, reloading, channel_num, mouse_down, idle_dir, rot)
 
         # Displays the game HUD
-        points = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
+        points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
             clock.tick(), mag_ammo, total_ammo, health_ring, posx, posy, points)
 
         # Caps the up and down angle of the player's camera
@@ -180,7 +159,7 @@ def main():
         
         # Sets the frame timing for a capped fps
         fps_delay = (1000/TARGET_FPS - (timer() * 1000 - milliseconds))/1000
-        print(int(1000/(33.34-(fps_delay*1000))))
+        #print(int(1000/(33.34-(fps_delay*1000))))
 
         screen.blit(surface, (0, 0))  # Passes the surface to the frame buffer
         pygame.display.update()

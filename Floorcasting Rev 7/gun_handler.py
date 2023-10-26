@@ -1,9 +1,10 @@
 from settings import *
 from images import *
+mouse_down = False
 
 
 def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, mag_ammo, total_ammo, reloading,
-             channel_num, mouse_down, idle_dir):
+             channel_num, mouse_down, idle_dir, rot):
     # Applies an idle animation to the gun
     if gun_bob == 0:
         if abs(idle_anim) <= 14:
@@ -17,22 +18,37 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
     else:
         if idle_anim > 0:
             idle_anim = idle_anim - 1
-
-    # Plays the gunfire animation
-    if keys[pygame.K_SPACE] or pygame.mouse.get_pressed()[
-        0] and mag_ammo > 0 and shooting == 0 and reloading == 0 and mouse_down:
-        print(mouse_down)
-        shooting = 1
-        if channel_num < 9:
-            channel_num += 1
-        else:
-            channel_num = 0
-        pygame.mixer.Channel(channel_num).play(pygame.mixer.Sound('sounds/pistol.mp3'))
-        pygame.mixer.Channel(20 + channel_num).play(pygame.mixer.Sound('sounds/brass.mp3'))
-
-    elif keys[pygame.K_SPACE] and mag_ammo == 0 and shooting == 0 and reloading == 0 and mouse_down:
-        if not pygame.mixer.Channel(14).get_busy():
-            pygame.mixer.Channel(14).play(pygame.mixer.Sound('sounds/empty.mp3'))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        # Gets mouse open and locks mouse to the center of the screen
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_delta = (mouse_pos[0] - (SCREEN_RES[0] / 2), mouse_pos[1] - (SCREEN_RES[1] / 2))
+            rot = rot + (mouse_delta[0] * MOUSE_SENSITIVITY / 100)
+            if pygame.mouse.get_pos() != (SCREEN_RES[0] / 2, SCREEN_RES[1] / 2):
+                if gun_bob > -120:
+                    gun_bob += mouse_delta[0] / 15
+                elif gun_bob < 120:
+                    gun_bob -= mouse_delta[0] / 15
+                pygame.mouse.set_pos((SCREEN_RES[0] / 2, SCREEN_RES[1] / 2))
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print('down')
+            if mag_ammo > 0 and mouse_down == False and shooting == 0 and reloading == 0:
+                mouse_down = True
+                shooting = 1
+                if channel_num < 9:
+                    channel_num += 1
+                else:
+                    channel_num = 0
+                pygame.mixer.Channel(channel_num).play(pygame.mixer.Sound('sounds/pistol.mp3'))
+                pygame.mixer.Channel(20 + channel_num).play(pygame.mixer.Sound('sounds/brass.mp3'))
+            elif mag_ammo == 0 and shooting == 0 and reloading == 0 and not mouse_down:
+                if not pygame.mixer.Channel(14).get_busy():
+                    pygame.mixer.Channel(14).play(pygame.mixer.Sound('sounds/empty.mp3'))
+        elif event.type == pygame.MOUSEBUTTONUP:
+            mouse_down = False
+            print('up')
 
     if shooting == 1:
         if current_gun < 4:
@@ -161,4 +177,4 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
             total_ammo = total_ammo + (mag_ammo - 7)
             mag_ammo = 7
 
-    return current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir
+    return current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot
