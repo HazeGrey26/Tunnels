@@ -4,6 +4,7 @@ import pygame
 TARGET_FPS = 30
 SCREEN_RES = (1024, 768)
 PISTOL_SIZE = (1000, 550)
+MOUSE_SENSITIVITY = 0.1
 sens = 0.005  # Camera sensitivity
 render_scale = 0.5  # Scales the render resolution of the game to improve performance
 hres = int(SCREEN_RES[0]*render_scale)  # Horizontal resolution of the game render
