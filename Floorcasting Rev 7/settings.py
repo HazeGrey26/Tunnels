@@ -12,6 +12,12 @@ hres = int(SCREEN_RES[0]*render_scale)  # Horizontal resolution of the game rend
 halfvres = int(SCREEN_RES[1]*render_scale/2)  # Half of the vertical resolution of the game render
 screen = pygame.display.set_mode((SCREEN_RES[0], SCREEN_RES[1]))  # Resolution of the game window
 
+# Prices
+AMMO_PISTOL_PRICE = 250
+
+# Gun Stats
+PISTOL_MAX_AMMO = 56
+
 WALL_RES = (200, 200)  # Dimensions of the wall texture in pixels
 FLOOR_RES = (240, 240)  # Dimensions of the floor texture in pixels
 FLOOR_SCALE = 1.5  # Sets the scale of your rendered floor texture

@@ -14,12 +14,13 @@ from gun_handler import *
 from hud_handler import *
 
 # TODO
+# When total ammo > 7 ammo is deleted when reloading BUGGED
 # Use .convert() and blit to improve performance for all images without transparency
 # Add a posz and another map for multiple floors
 # Add more rays near the edge of the screen to avoid stair-stepping at the edges
 # Add a sprite system
 # Add an options menu w/ brightness slider, camera sensitivity (DONE), and render scale (BUGGED)
-# Add camera bob when walking
+# Add camera bob when walking and fix up and down camera motion
 # Make an enemy logic system
 # Add multiple weapons
 # Add a door-buying system

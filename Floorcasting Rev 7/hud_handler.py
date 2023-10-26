@@ -34,11 +34,11 @@ def hud(surface, gun_bob, crosshair, crosshair_size, keys, timer, mag_ammo, tota
 
     # Prompts the player to buy ammo at the (8,1) wall buy station
     if 8.5 < posx < 9 and 1.2 < posy < 1.8:
-        surface.blit(prompt_text.render(f'Press F to Buy 1911 Ammo | 250 Points', False, (255, 255, 255)),
+        surface.blit(prompt_text.render(f'Press F to Buy 1911 Ammo | {AMMO_PISTOL_PRICE} Points', False, (255, 255, 255)),
                      (SCREEN_RES[0] / 2 - 200, SCREEN_RES[1] / 2 + 100))
-        if keys[ord('f')] and points >= 250 and total_ammo < 56:
-            total_ammo = 56
-            points = points - 250
+        if keys[ord('f')] and points >= AMMO_PISTOL_PRICE and total_ammo < PISTOL_MAX_AMMO:
+            total_ammo = PISTOL_MAX_AMMO
+            points = points - AMMO_PISTOL_PRICE
             total_ammo = MAX_AMMO
             pygame.mixer.Channel(13).play(pygame.mixer.Sound('sounds/purchase.mp3'))
 
