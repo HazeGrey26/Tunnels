@@ -1,9 +1,9 @@
 import numpy  # Helps with ray casting
 from numba import njit  # Uses optimized math to increase performance
-
+from settings import *
 
 @njit()  # This is a decorator that denotes njit optimizations (from numba)
-def new_frame(frame, posx, posy, rot, mod, hres, current_map, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
+def new_frame(frame, pos_y, pos_x, rot, mod, hres, current_map, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
              WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, floorScale, FLOOR_RES, floor, ceiling, vertical_angle):
     horizontal_shift = 0
 
@@ -12,19 +12,19 @@ def new_frame(frame, posx, posy, rot, mod, hres, current_map, halfvres, WALL_RES
         rot_i = rot + numpy.deg2rad(i/mod - 30)
         # cos2 corrects the 'fisheye' effect
         sin, cos, cos2 = numpy.sin(rot_i), numpy.cos(rot_i), numpy.cos(numpy.deg2rad(i/mod - 30))
-        x, y = posx, posy
+        x, y = pos_y, pos_x
         # Specifies locations to draw the walls
         while current_map[int(x)][int(y)] == 0:
             x, y = x + 0.01*cos, y + 0.01*sin
 
-        n = abs((x - posx)/cos)  # Warps each wall depending on its angle from the camera
+        n = abs((x - pos_y)/cos)/WALL_BASE_SCALE  # Warps each wall depending on its distance from the camera  # The / WALL_BASE_SCALE is for thin walls
         h = int(halfvres/(n*cos2 + 0.001))  # Scales the height of each wall based on its distance from the camera
 
         xx = int((x*1 % 1)*WALL_RES[0])  # Tiles each wall texture side by side
         
         if x % 1 < 0.01 or x % 1 > 0.99:  # If x is close to an integer value
-            xx = int((y*1 % 1)*WALL_RES[1])
-        yy = numpy.linspace(0, 198, h*2) % 199
+            xx = int((y*1 % 1)*WALL_RES[0])
+        yy = numpy.linspace(0, WALL_RES[1]-1, h*2) % WALL_RES[1]
 
         # Prevents shade from going above 1 and messing up the color
         shade = 0.05 + 0.8*(h/(halfvres*2))
@@ -73,8 +73,10 @@ def new_frame(frame, posx, posy, rot, mod, hres, current_map, halfvres, WALL_RES
         # Casts the floor and ceiling
         for j in range(halfvres - h):
             # cos2 corrects the 'fisheye' effect by curving the floor textures at the bottom corners of the screen
-            n = (halfvres / (halfvres - j)) / cos2
-            x, y = posx + cos*n, posy + sin*n
+            n = (halfvres / (halfvres - j)) / cos2 * WALL_BASE_SCALE  # The * WALL_BASE_SCALE is for scaling with thin walls
+            x, y = pos_y + cos*n, pos_x + sin*n
+            x = x / (WALL_BASE_SCALE*2)
+            y = y / (WALL_BASE_SCALE*2)
 
             # Variables that help draw the floor textures with distortion
             xx, yy = int((x*floorScale % 1)*FLOOR_RES[0]), int((y*floorScale % 1)*FLOOR_RES[1])

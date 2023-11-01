@@ -1,5 +1,6 @@
 from time import time as timer
 import time
+from math import pi
 
 import pygame
 
@@ -15,9 +16,12 @@ from hud_handler import *
 
 # TODO
 # When total ammo > 7 ammo is deleted when reloading BUGGED
+# Make it so where you slide on walls
+# Make a sound handler
+# You move faster when you strafe? Remove this
+# Make a round system like the survival night in RE7 (1 Boss, 1 Sub-Boss, Constantly Spawning Normal Enemies)
 # Use .convert() and blit to improve performance for all images without transparency
 # Add a posz and another map for multiple floors
-# Add more rays near the edge of the screen to avoid stair-stepping at the edges
 # Add a sprite system
 # Add an options menu w/ brightness slider, camera sensitivity (DONE), and render scale (BUGGED)
 # Add camera bob when walking and fix up and down camera motion
@@ -25,8 +29,8 @@ from hud_handler import *
 # Add multiple weapons
 # Add a door-buying system
 # Add points for shooting enemies
-# Shadows???
-# Thin walls???
+# Shadows/Specular Textures???
+# Thin walls??? Instead of cubes, make the walls 0.5m x 0.5m x 1m pillars (DONE)
 
 pygame.init()
 running = True
@@ -45,7 +49,7 @@ def main():
     clock = pygame.time.Clock()
 
     mod = hres / 60  # Scales to a 60 degrees field of view
-    posx, posy, rot = 1.2, 1.2, 0  # Sets player's starting position to avoid collisions and rotation to zero
+    pos_x, pos_y, rot = 36.2, 13.2, 0  # Sets player's starting position to avoid collisions and rotation to zero
     
     # Audio files
     pygame.mixer.set_num_channels(99)
@@ -110,10 +114,10 @@ def main():
 
         if frame_update:
             new_mod = new_hres / 60  # Scales to a 60 degrees field of view
-            frame = new_frame(frame, posx, posy, rot, new_mod, new_hres, map1, new_halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
+            frame = new_frame(frame, pos_y, pos_x, rot, new_mod, new_hres, map1, new_halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
                              WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling, vertical_angle)
         else:
-            frame = new_frame(frame, posx, posy, rot, mod, hres, map1, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
+            frame = new_frame(frame, pos_y, pos_x, rot, mod, hres, map1, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
                              WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling, vertical_angle)
 
         # Converts the numpy frame into a surface displayable by pygame (with 256-bit color depth)
@@ -127,20 +131,20 @@ def main():
             pygame.mouse.set_visible(True)  # Shows the mouse cursor
             while pause:
                 if set_update:
-                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pause_screen(
-                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, new_scale, new_sens, SCREEN_RES)
+                    running, pause, new_hres, new_halfvres, new_scale = pause_screen(
+                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, new_scale, SCREEN_RES)
                 else:
-                    running, pause, new_hres, new_halfvres, new_sens, new_scale = pause_screen(
-                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, render_scale, sens, SCREEN_RES)
+                    running, pause, new_hres, new_halfvres, new_scale = pause_screen(
+                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, render_scale, SCREEN_RES)
                 set_update = True
                 frame_update = True
             pygame.mouse.set_visible(False)  # Hides the mouse cursor
 
         # Fetches the player position and rotation from the movement function
         if set_update:
-            posx, posy, rot, gun_bob, vertical_angle = movement(posx, posy, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, new_sens, vertical_angle)
+            pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, new_sens, vertical_angle)
         else:
-            posx, posy, rot, gun_bob, vertical_angle = movement(posx, posy, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, sens, vertical_angle)
+            pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, sens, vertical_angle)
         #print(vertical_angle)
 
         # Draws the gun
@@ -150,7 +154,7 @@ def main():
 
         # Displays the game HUD
         points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
-            clock.tick(), mag_ammo, total_ammo, health_ring, posx, posy, points)
+            clock.tick(), mag_ammo, total_ammo, health_ring, pos_y, pos_x, points)
 
         # Caps the up and down angle of the player's camera
         if vertical_angle < -50:

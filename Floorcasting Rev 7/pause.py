@@ -2,7 +2,7 @@
 import pygame
 
 
-def pause_screen(pause, title_background, title_gradient, title_image, text_box, ticker, screen, hud_text, render_scale, sens, SCREEN_RES):
+def pause_screen(pause, title_background, title_gradient, title_image, text_box, ticker, screen, hud_text, render_scale, SCREEN_RES):
     running = True
 
     pygame.event.get()
@@ -31,9 +31,7 @@ def pause_screen(pause, title_background, title_gradient, title_image, text_box,
         if pygame.mouse.get_pressed()[0]:  # Detects if you click the button
             pygame.mixer.Channel(0).play(pygame.mixer.Sound('sounds/click.mp3'))
             # brightness = int(input("Enter a brightness value (0-100): "))
-            sens = int(input("Enter a sensitivity value (0-100): "))/10000
             render_scale = (int(input("Enter a video scaler value (0-100): ")))/100
-            print(f'Camera sensitivity = {sens}')
             print(f'Render scale = {render_scale}')
     else:
         pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))  # Draws pause screen button
@@ -57,4 +55,4 @@ def pause_screen(pause, title_background, title_gradient, title_image, text_box,
     new_halfvres = int(SCREEN_RES[1] * render_scale / 2)  # Half of the vertical resolution of the game render
     
     pygame.display.update()
-    return running, pause, new_hres, new_halfvres, sens, render_scale
+    return running, pause, new_hres, new_halfvres, render_scale

@@ -6,6 +6,8 @@ SCREEN_RES = (1024, 768)
 PISTOL_SIZE = (1000, 550)
 MOUSE_SENSITIVITY = 0.4
 MAX_AMMO = 56
+WALL_BASE_SCALE = 1.75
+PLAYER_SPEED = 0.002
 sens = 0.005  # Camera sensitivity
 render_scale = 0.5  # Scales the render resolution of the game to improve performance
 hres = int(SCREEN_RES[0]*render_scale)  # Horizontal resolution of the game render
@@ -18,6 +20,6 @@ AMMO_PISTOL_PRICE = 250
 # Gun Stats
 PISTOL_MAX_AMMO = 56
 
-WALL_RES = (200, 200)  # Dimensions of the wall texture in pixels
+WALL_RES = (200, 400)  # Dimensions of the wall texture in pixels
 FLOOR_RES = (240, 240)  # Dimensions of the floor texture in pixels
 FLOOR_SCALE = 1.5  # Sets the scale of your rendered floor texture
