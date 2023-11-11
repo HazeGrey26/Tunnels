@@ -52,6 +52,10 @@ WALL_BARS = pygame.image.load('images/bars.png').convert()
 WALL_BARS.set_colorkey((0, 0, 0))
 WALL_BARS = pygame.surfarray.array3d(WALL_BARS)
 
+WALL_ERROR = pygame.image.load('images/error.jpg').convert()
+WALL_ERROR.set_colorkey((0, 0, 0))
+WALL_ERROR = pygame.surfarray.array3d(WALL_ERROR)
+
 WALL_BRICK_DAMAGE1 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged.jpg'))
 WALL_BRICK_DAMAGE2 = pygame.surfarray.array3d(pygame.image.load('images/wallBrickDamaged1.jpg'))
 WALL_WOOD = pygame.surfarray.array3d(pygame.image.load('images/wallWood.jpg'))

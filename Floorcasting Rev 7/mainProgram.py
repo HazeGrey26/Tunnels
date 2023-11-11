@@ -13,24 +13,26 @@ from images import *
 from maps import *
 from gun_handler import *
 from hud_handler import *
+from purchase_handler import *
+from sprite_classes import *
 
 # TODO
 # When total ammo > 7 ammo is deleted when reloading BUGGED
-# Make it so where you slide on walls
+# Sounds bugs out when moving diagonally, left, or right
 # Make a sound handler
 # You move faster when you strafe? Remove this
 # Make a round system like the survival night in RE7 (1 Boss, 1 Sub-Boss, Constantly Spawning Normal Enemies)
 # Use .convert() and blit to improve performance for all images without transparency
 # Add a posz and another map for multiple floors
 # Add a sprite system
-# Add an options menu w/ brightness slider, camera sensitivity (DONE), and render scale (BUGGED)
-# Add camera bob when walking and fix up and down camera motion
+# Make more than just 'Normal' difficulty
+# Add camera bob when walking and up/ down camera motion (BUGGED)
 # Make an enemy logic system
 # Add multiple weapons
+# Add an inventory and weapon selector GUI
 # Add a door-buying system
 # Add points for shooting enemies
 # Shadows/Specular Textures???
-# Thin walls??? Instead of cubes, make the walls 0.5m x 0.5m x 1m pillars (DONE)
 
 pygame.init()
 running = True
@@ -41,15 +43,15 @@ point_text = pygame.font.SysFont('agencyfb', 25)
 prompt_text = pygame.font.SysFont('couriernew', 18)
 
 
-def main():
+def main(map1, number_of_enemies):
     # Where the game render will be stored before being sent to pygame
     frame = numpy.random.uniform(0, 0, (hres, halfvres * 2, 3))
     
     # Variable to set the player's movements to be independent of the frame rate
     clock = pygame.time.Clock()
 
-    mod = hres / 60  # Scales to a 60 degrees field of view
-    pos_x, pos_y, rot = 36.2, 13.2, 0  # Sets player's starting position to avoid collisions and rotation to zero
+    mod = hres / FIELD_OF_VIEW  # Scales to a 60 degrees field of view
+    pos_x, pos_y, rot = STARTING_POSITION[0], STARTING_POSITION[1], 0  # Sets player's starting position to avoid collisions and rotation to zero
     
     # Audio files
     pygame.mixer.set_num_channels(99)
@@ -104,21 +106,21 @@ def main():
     while running:
         milliseconds = timer() * 1000
 
+        # Spawns in enemies
+        if number_of_enemies < 1:
+            enemies.add(Enemy((31.2, 13.2), WEAK_ENEMY_HEALTH))
+            number_of_enemies += 1
+            print('Enemy spawned')
+
         # Returns the pistol to the center
-        if gun_bob <= 12:
-            gun_bob = gun_bob + 12
-        if gun_bob >= 12:
-            gun_bob = gun_bob - 12
-        if -12 <= gun_bob <= 12:
+        if gun_bob <= GUN_BOB_AMOUNT:
+            gun_bob = gun_bob + GUN_BOB_AMOUNT
+        if gun_bob >= GUN_BOB_AMOUNT:
+            gun_bob = gun_bob - GUN_BOB_AMOUNT
+        if -GUN_BOB_AMOUNT <= gun_bob <= GUN_BOB_AMOUNT:
             gun_bob = 0
 
-        if frame_update:
-            new_mod = new_hres / 60  # Scales to a 60 degrees field of view
-            frame = new_frame(frame, pos_y, pos_x, rot, new_mod, new_hres, map1, new_halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
-                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling, vertical_angle)
-        else:
-            frame = new_frame(frame, pos_y, pos_x, rot, mod, hres, map1, halfvres, WALL_RES, WALL_BRICK, WALL_WOOD, WALL_BARS, WALL_PPSH, WALL_SHOTGUN,
-                             WALL_DOOR, WALL_PISTOL, WALL_GRAFFITI, WALL_BRICK_DAMAGE1, WALL_BRICK_DAMAGE2, FLOOR_SCALE, FLOOR_RES, floor, ceiling, vertical_angle)
+        frame = new_frame(frame, pos_y, pos_x, rot, mod, hres, map1, halfvres, floor, ceiling, vertical_angle)
 
         # Converts the numpy frame into a surface displayable by pygame (with 256-bit color depth)
         surface = pygame.surfarray.make_surface(frame * 255)
@@ -131,26 +133,27 @@ def main():
             pygame.mouse.set_visible(True)  # Shows the mouse cursor
             while pause:
                 if set_update:
-                    running, pause, new_hres, new_halfvres, new_scale = pause_screen(
-                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, new_scale, SCREEN_RES)
+                    running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES)
                 else:
-                    running, pause, new_hres, new_halfvres, new_scale = pause_screen(
-                        pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, render_scale, SCREEN_RES)
+                    running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES)
                 set_update = True
                 frame_update = True
             pygame.mouse.set_visible(False)  # Hides the mouse cursor
 
         # Fetches the player position and rotation from the movement function
-        if set_update:
-            pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, new_sens, vertical_angle)
-        else:
-            pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, sens, vertical_angle)
-        #print(vertical_angle)
+        pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, vertical_angle)
+
+        # Draws enemy sprites
+        for sprite in enemies:
+             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
 
         # Draws the gun
         current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot = gun_draw(
             clock.tick(), current_gun, surface, gun_bob, pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
             total_ammo, reloading, channel_num, mouse_down, idle_dir, rot)
+
+        # Are we at a location to buy an item?
+        points, map1 = door_prompt(pos_x, pos_y, surface, prompt_text, pygame.key.get_pressed(), points, map1)
 
         # Displays the game HUD
         points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
@@ -164,7 +167,6 @@ def main():
         
         # Sets the frame timing for a capped fps
         fps_delay = (1000/TARGET_FPS - (timer() * 1000 - milliseconds))/1000
-        #print(int(1000/(33.34-(fps_delay*1000))))
 
         screen.blit(surface, (0, 0))  # Passes the surface to the frame buffer
         pygame.display.update()
@@ -174,7 +176,7 @@ def main():
 
         # Displays frames per second
         fps = int(clock.get_fps()/2)
-        pygame.display.set_caption("Aaron's Ray Casting Demo    fps = " + str(fps))
+        pygame.display.set_caption("Aaron's Ray Casting Demo    Uncapped FPS = " + str(fps))
 
 
 def title_screen(title_image, title_gradient, title_background, text_box, ticker):
@@ -205,7 +207,7 @@ def title_screen(title_image, title_gradient, title_background, text_box, ticker
         pygame.draw.polygon(screen, (100, 100, 100), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))
     else:
         pygame.draw.polygon(screen, (50, 50, 50), ((50, 500+100), (35, 430+100), (360, 430+100), (360, 500+100)))  # Draws title screen button
-    screen.blit(hud_text.render('Options', False, (10, 10, 10)), (80, 435+100))
+    screen.blit(hud_text.render(f'Difficulty | {difficulty}', False, (10, 10, 10)), (80, 435+100))
 
     if 50 < mouse[0] < 360 and 430+200 < mouse[1] < 500+200:
         ticker = True
@@ -227,5 +229,5 @@ def title_screen(title_image, title_gradient, title_background, text_box, ticker
 
 
 if __name__ == "__main__":  # Runs main function
-    main()
+    main(map1, number_of_enemies)
     pygame.quit()

@@ -84,4 +84,7 @@ def movement(posx, posy, rot, keys, timer, gun_bob, map1, vertical_angle):
         pygame.mixer.Channel(10).fadeout(250)
         pygame.mixer.Channel(11).fadeout(250)
 
+    if  keys[ord('v')]:
+        print(f"x: {posx} | y: {posy}")
+
     return posx, posy, rot, gun_bob, vertical_angle  # Outputs the player's position and rotation
