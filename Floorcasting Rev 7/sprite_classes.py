@@ -59,11 +59,13 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
         screen_pos = (self.enemy_screen_pos[0] - self.image.get_height() / 2, self.enemy_screen_pos[1] - self.image.get_width() / 2)
 
-        screen_shift = (delta_angle - pi)/fov  # Where the enemy will be drawn on screen (negative = left, positive = right)
-
+        if delta_angle < 0:
+            screen_shift = -(-delta_angle - pi)/fov  # Where the enemy will be drawn on screen (negative = left, positive = right)
+        else:
+            screen_shift = (delta_angle - pi) / fov
         # Shifts the enemies y-position on screen according to angle_to_screen
         screen_pos = (screen_pos[0] + screen_shift * (SCREEN_RES[0]/2), screen_pos[1])
-        print(f"P_Rot: {int(player_rot)} dlta {delta_angle}\nplrAng {angle_to_player}\nEVec {enemy_vector}")
+        print(f"Shift: {int(screen_shift)} dlta {delta_angle}\nplrAng {angle_to_player}\nEVec {enemy_vector}")
 
         if angle_between_vectors > 5/6:  # Ensures the enemy is drawn only when the player can see it
             surface.blit(self.image, screen_pos)  # Draws the enemy on screen
