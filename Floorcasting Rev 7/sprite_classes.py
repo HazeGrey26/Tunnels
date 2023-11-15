@@ -41,16 +41,13 @@ class Enemy(pygame.sprite.Sprite):
         magnitude = 1/((delta_x**2 + delta_y**2)**(1/2))  # Magnitude of a vector formula
         distance_to_player = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)  # Pythagorean Theorem
         player_vector = [cos(player_rot), sin(player_rot)]
-        rotation_vector = [cos(2*pi - ((rot - pi/2) % (2 * pi))), sin(2*pi - ((rot - pi/2) % (2 * pi)))]
         enemy_vector = [-delta_x * magnitude, -delta_y * magnitude]
         angle_between_vectors = numpy.dot(player_vector, enemy_vector)
 
         if enemy_vector[0] < 0:
             angle_to_player = asin(delta_y / distance_to_player)
-            print("asin")
         else:
             angle_to_player = pi - asin(delta_y / distance_to_player)
-            print("alt asin")
         delta_angle = player_rot - angle_to_player  # This is where my sprite problem is
 
         self.image_scale = abs(1 / (((delta_x**2 + delta_y**2)**(1/2)) ** (1 / 2)))   # This is a test
@@ -65,11 +62,9 @@ class Enemy(pygame.sprite.Sprite):
             screen_shift = (delta_angle - pi) / fov
         # Shifts the enemies y-position on screen according to angle_to_screen
         screen_pos = (screen_pos[0] + screen_shift * (SCREEN_RES[0]/2), screen_pos[1])
-        print(f"Shift: {int(screen_shift)} dlta {delta_angle}\nplrAng {angle_to_player}\nEVec {enemy_vector}")
 
         if angle_between_vectors > 5/6:  # Ensures the enemy is drawn only when the player can see it
             surface.blit(self.image, screen_pos)  # Draws the enemy on screen
-            print("True")
 
 
 enemies = pygame.sprite.Group()
