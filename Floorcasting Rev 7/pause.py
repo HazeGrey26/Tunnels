@@ -4,7 +4,6 @@ import pygame
 
 def pause_screen(pause, title_background, title_gradient, title_image, text_box, ticker, screen, hud_text, SCREEN_RES):
     running = True
-
     pygame.event.get()
     mouse = pygame.mouse.get_pos()
     screen.fill((255, 0, 0))

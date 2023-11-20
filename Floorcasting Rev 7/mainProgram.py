@@ -24,7 +24,7 @@ from sprite_classes import *
 # Make a round system like the survival night in RE7 (1 Boss, 1 Sub-Boss, Constantly Spawning Normal Enemies)
 # Use .convert() and blit to improve performance for all images without transparency
 # Add a posz and another map for multiple floors
-# Add a sprite system
+# Add angled images to the sprite system
 # Make more than just 'Normal' difficulty
 # Add camera bob when walking and up/ down camera motion (BUGGED)
 # Make an enemy logic system
@@ -42,6 +42,7 @@ hud_text = pygame.font.SysFont('agencyfb', 45)
 point_text = pygame.font.SysFont('agencyfb', 25)
 prompt_text = pygame.font.SysFont('couriernew', 18)
 
+map1 = generate_map()
 
 def main(map1, number_of_enemies):
     # Where the game render will be stored before being sent to pygame

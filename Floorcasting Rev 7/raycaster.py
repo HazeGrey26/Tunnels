@@ -17,7 +17,8 @@ def new_frame(frame, pos_y, pos_x, rot, mod, hres, current_map, halfvres, floor,
         while current_map[int(x)][int(y)] == 0:
             x, y = x + 0.01*cos, y + 0.01*sin
 
-        n = abs((x - pos_y)/cos)/WALL_BASE_SCALE  # Warps each wall depending on its distance from the camera  # The / WALL_BASE_SCALE is for thin walls
+        n = abs((x - pos_y)/cos)/WALL_BASE_SCALE  # Warps each wall depending on its distance from the camera
+        # The / WALL_BASE_SCALE is for thin walls
         h = int(halfvres/(n*cos2 + 0.001))  # Scales the height of each wall based on its distance from the camera
 
         # When h isn't capped, it approaches infinity as you get close to a wall. This reduces fps.
@@ -58,7 +59,8 @@ def new_frame(frame, pos_y, pos_x, rot, mod, hres, current_map, halfvres, floor,
         # Casts the floor and ceiling
         for j in range(halfvres - h):
             # cos2 corrects the 'fisheye' effect by curving the floor textures at the bottom corners of the screen
-            n = (halfvres / (halfvres - j)) / cos2 * WALL_BASE_SCALE  # The * WALL_BASE_SCALE is for scaling with thin walls
+            n = (halfvres / (halfvres - j)) / cos2 * WALL_BASE_SCALE
+            # The * WALL_BASE_SCALE is for scaling with thin walls
             x, y = pos_y + cos*n, pos_x + sin*n
             x = x / (WALL_BASE_SCALE*2)
             y = y / (WALL_BASE_SCALE*2)

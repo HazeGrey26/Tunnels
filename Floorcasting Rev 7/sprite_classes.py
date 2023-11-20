@@ -1,4 +1,4 @@
-from math import pi, asin, atan, acos, cos, sin
+from math import pi, asin, cos, sin
 import pygame
 from numpy import deg2rad, dot
 import numpy
@@ -8,8 +8,8 @@ from settings import *
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, spawn_pos, health):
         super().__init__()
-        self.SOURCE_IMAGE = pygame.image.load("images/enemy_default.png").convert()
-        self.SOURCE_IMAGE_RESOLUTION = (100, 100)
+        self.SOURCE_IMAGE = pygame.image.load("images/spider_sprite.png").convert()
+        self.SOURCE_IMAGE_RESOLUTION = (1024, 496)
         self.image_scale = 1
         self.sprite_size = (int(self.SOURCE_IMAGE_RESOLUTION[0] * self.image_scale), int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
         self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
@@ -48,13 +48,15 @@ class Enemy(pygame.sprite.Sprite):
             angle_to_player = asin(delta_y / distance_to_player)
         else:
             angle_to_player = pi - asin(delta_y / distance_to_player)
-        delta_angle = player_rot - angle_to_player  # This is where my sprite problem is
+        delta_angle = player_rot - angle_to_player  # This is where my sprite problem was
 
-        self.image_scale = abs(1 / (((delta_x**2 + delta_y**2)**(1/2)) ** (1 / 2)))   # This is a test
+        y_adjust = SCREEN_RES[1]/distance_to_player
+
+        self.image_scale = abs(1 / (((delta_x**2 + delta_y**2)**(1/2))))   # This is a test
         self.sprite_size = (int(self.SOURCE_IMAGE_RESOLUTION[0] * self.image_scale),
                             int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
         self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
-        screen_pos = (self.enemy_screen_pos[0] - self.image.get_height() / 2, self.enemy_screen_pos[1] - self.image.get_width() / 2)
+        screen_pos = (self.enemy_screen_pos[0] - self.image.get_width() / 2, self.enemy_screen_pos[1] - self.image.get_height() / 2 + y_adjust)
 
         if delta_angle < 0:
             screen_shift = -(-delta_angle - pi)/fov  # Where the enemy will be drawn on screen (negative = left, positive = right)
