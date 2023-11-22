@@ -43,6 +43,7 @@ point_text = pygame.font.SysFont('agencyfb', 25)
 prompt_text = pygame.font.SysFont('couriernew', 18)
 
 map1 = generate_map()
+zone_map = generate_zones()
 
 def main(map1, number_of_enemies):
     # Where the game render will be stored before being sent to pygame
@@ -178,6 +179,8 @@ def main(map1, number_of_enemies):
         # Displays frames per second
         fps = int(clock.get_fps()/2)
         pygame.display.set_caption("Aaron's Ray Casting Demo    Uncapped FPS = " + str(fps))
+
+        locate_zone((pos_x, pos_y), zone_map)  # Temporarily prints off the player's zone
 
 
 def title_screen(title_image, title_gradient, title_background, text_box, ticker):

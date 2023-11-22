@@ -33,7 +33,6 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
                     gun_bob -= mouse_delta[0] / 15
                 pygame.mouse.set_pos((SCREEN_RES[0] / 2, SCREEN_RES[1] / 2))
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print('down')
             if mag_ammo > 0 and mouse_down == False and shooting == 0 and reloading == 0:
                 mouse_down = True
                 shooting = 1
@@ -48,7 +47,6 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
                     pygame.mixer.Channel(14).play(pygame.mixer.Sound('sounds/empty.mp3'))
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse_down = False
-            print('up')
 
     if shooting == 1:
         if current_gun < 4:
