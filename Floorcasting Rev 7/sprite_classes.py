@@ -10,19 +10,30 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         self.SOURCE_IMAGE = pygame.image.load("images/spider_sprite.png").convert()
         self.SOURCE_IMAGE_RESOLUTION = (1024, 496)
-        self.image_scale = 1
+        self.image_scale = 1  # Not Working
         self.sprite_size = (int(self.SOURCE_IMAGE_RESOLUTION[0] * self.image_scale), int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
         self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
         self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
-        self.position = spawn_pos
+        self.position = list(spawn_pos)
         self.health = 100
+        self.speed = 0.01
         self.enemy_screen_pos = [SCREEN_RES[0]/2, SCREEN_RES[1]/2]
         self.rect = (200, (SCREEN_RES[1]/2)-(self.image.get_height()/2))
-        print('initialized')
+        print('Enemy class initialized')
 
-    def move(self, position, speed, player_pos):
-        # Some code to move the enemy
-        return position
+# Points directly towards the player and moves forward. Does not reference waypoints.
+    def move_to_player(self, player_x, player_y):
+        enemy_x = self.position[0]
+        enemy_y = self.position[1]
+        delta_x = player_x - enemy_x
+        delta_y = player_y - enemy_y
+        vector_magnitude = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)  # Pythagorean Theorem
+        vector_to_player = [delta_x / vector_magnitude, delta_y / vector_magnitude]  # A unit vector
+
+        distance_moving = [self.speed * vector_to_player[0], self.speed * vector_to_player[1]]
+        self.position[0] += distance_moving[0]
+        self.position[1] += distance_moving[1]
+
 
     def take_damage(self, health, damage_value):
         self.health -= damage_value

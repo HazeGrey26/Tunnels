@@ -25,7 +25,7 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             mouse_delta = (mouse_pos[0] - (SCREEN_RES[0] / 2), mouse_pos[1] - (SCREEN_RES[1] / 2))
-            rot = rot + (mouse_delta[0] * MOUSE_SENSITIVITY / 100)
+            rot = rot + (mouse_delta[0] * MOUSE_SENSITIVITY / 500)
             if pygame.mouse.get_pos() != (SCREEN_RES[0] / 2, SCREEN_RES[1] / 2):
                 if gun_bob > -120:
                     gun_bob += mouse_delta[0] / 15

@@ -48,6 +48,10 @@ WALL_BRICK = pygame.image.load('images/wallBrick.jpg').convert()
 WALL_BRICK.set_colorkey((0, 0, 0))
 WALL_BRICK = pygame.surfarray.array3d(WALL_BRICK)
 
+WALL_HOLE = pygame.image.load('images/wallHole.png').convert()
+WALL_HOLE.set_colorkey((0, 0, 0))
+WALL_HOLE = pygame.surfarray.array3d(WALL_HOLE)
+
 WALL_BARS = pygame.image.load('images/bars.png').convert()
 WALL_BARS.set_colorkey((0, 0, 0))
 WALL_BARS = pygame.surfarray.array3d(WALL_BARS)

@@ -13,8 +13,10 @@ from images import *
 from maps import *
 from gun_handler import *
 from hud_handler import *
-from purchase_handler import *
 from sprite_classes import *
+map1, door_locations = generate_map()
+zone_map = generate_zones()
+from purchase_handler import door_prompt
 
 # TODO
 # When total ammo > 7 ammo is deleted when reloading BUGGED
@@ -41,9 +43,6 @@ running = True
 hud_text = pygame.font.SysFont('agencyfb', 45)
 point_text = pygame.font.SysFont('agencyfb', 25)
 prompt_text = pygame.font.SysFont('couriernew', 18)
-
-map1 = generate_map()
-zone_map = generate_zones()
 
 def main(map1, number_of_enemies):
     # Where the game render will be stored before being sent to pygame
@@ -147,7 +146,8 @@ def main(map1, number_of_enemies):
 
         # Draws enemy sprites
         for sprite in enemies:
-             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
+            sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
+            sprite.move_to_player(pos_x, pos_y)
 
         # Draws the gun
         current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot = gun_draw(
