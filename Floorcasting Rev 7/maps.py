@@ -104,8 +104,8 @@ def generate_zones():
 
 
 def generate_waypoints(zone_map):
-    waypoints = [(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),
-                 (0,0),(0,0),(2,3),(0,0),(0,0),(0,0),(0,0),(0,0)]  # What zones each waypoint connects
+    waypoints = [(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(2,8),
+                 (0,0),(2,1),(2,3),(0,0),(0,0),(0,0),(0,0),(0,0)]  # What zones each waypoint connects
     waypoint_list = []
     number = 0
     counter = 0
