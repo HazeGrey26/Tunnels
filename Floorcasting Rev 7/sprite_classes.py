@@ -23,6 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox_width = self.SOURCE_IMAGE_RESOLUTION[0]
         self.screen_pos = [0, 0]
         self.zone = 0
+        self.destination = (0,0)
         print('Enemy class initialized')
 
     def point_and_seek(self, player_x, player_y):
@@ -37,18 +38,28 @@ class Enemy(pygame.sprite.Sprite):
         self.position[0] += distance_moving[0]
         self.position[1] += distance_moving[1]
 
-    def move_to_zone(self, player_zone):
-        print(f"Current: {self.zone}\nDestination: {player_zone}")
+    def move_to_zone(self, player_zone, waypoint_list):
+        if round(self.destination[0] * 4) == round(self.position[0] * 4) and round(self.destination[1] * 4) == round(self.position[1] * 4):  # *4 makes it accurate to a fourth of a tile
+            self.destination = (0,0)
+        elif self.destination != (0,0):  # Checks if there is an active destination
+            self.point_and_seek(self.destination[0], self.destination[1])
+        else:  # Generates a new waypoint destination
+            for waypoint in waypoint_list:
+                if waypoint[2][0] == self.zone or waypoint[2][1] == self.zone:
+                    if waypoint[2][0] == player_zone or waypoint[2][1] == player_zone:
+                        self.destination = (waypoint[1][0], waypoint[1][1])
+                        print(self.destination)
+                        print(f"I am at {self.position[0]}, {self.position[1]}")
+                        self.point_and_seek(self.destination[0], self.destination[1])
+
 
 # Points directly towards the player and moves forward. Does not reference waypoints.
-    def move_to_player(self, player_x, player_y, player_zone, zone_map):
+    def move_to_player(self, player_x, player_y, player_zone, zone_map, waypoint_list):
         self.zone = locate_zone(self.position, zone_map)
-        if self.zone == player_zone:
+        if self.zone == player_zone or self.zone == 15:  # 15 is the border between zones
             self.point_and_seek(player_x, player_y)
         else:
-            self.move_to_zone(player_zone)
-
-
+            self.move_to_zone(player_zone, waypoint_list)
 
     def take_damage(self, damage_value, points):
         if self.screen_pos[0] < (SCREEN_RES[0]/2):

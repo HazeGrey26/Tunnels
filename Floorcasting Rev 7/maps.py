@@ -102,6 +102,26 @@ def generate_zones():
     zones[23], zones[24], zones[25], zones[26], zones[27]))
     return zone_map
 
+
+def generate_waypoints(zone_map):
+    waypoints = [(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),
+                 (0,0),(0,0),(2,3),(0,0),(0,0),(0,0),(0,0),(0,0)]  # What zones each waypoint connects
+    waypoint_list = []
+    number = 0
+    counter = 0
+    for column in zone_map:
+        row = 0
+        for pixel in column:
+            if pixel == 15:  # Flag for a white pixel
+                data = (counter, (row, number), waypoints[counter])
+                waypoint_list.append(data)
+                counter += 1
+            row += 1
+        number += 1
+    print(waypoint_list)
+    return waypoint_list  # List formatted as [(waypoint#, (x, y), (zone1, zone2), (), ...]
+
+
 def locate_zone(position, zone_map):
     y = int(position[0])
     x = int(position[1])

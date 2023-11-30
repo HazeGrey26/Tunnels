@@ -16,6 +16,7 @@ from hud_handler import *
 from sprite_classes import *
 map1, door_locations = generate_map()
 zone_map = generate_zones()
+waypoint_list = generate_waypoints(zone_map)
 from purchase_handler import door_prompt
 
 # TODO
@@ -149,7 +150,7 @@ def main(map1, number_of_enemies):
         # Draws enemy sprites
         for sprite in enemies:
             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
-            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
+            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map, waypoint_list)
 
         # Draws the gun
         current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points = gun_draw(
