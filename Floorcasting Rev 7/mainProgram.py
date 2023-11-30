@@ -144,15 +144,17 @@ def main(map1, number_of_enemies):
         # Fetches the player position and rotation from the movement function
         pos_y, pos_x, rot, gun_bob, vertical_angle = movement(pos_y, pos_x, rot, pygame.key.get_pressed(), clock.tick(), gun_bob, map1, vertical_angle)
 
+        player_zone = locate_zone((pos_x, pos_y), zone_map)  # Fetches the player's zone
+
         # Draws enemy sprites
         for sprite in enemies:
             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
-            sprite.move_to_player(pos_x, pos_y)
+            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
 
         # Draws the gun
-        current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot = gun_draw(
+        current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points = gun_draw(
             clock.tick(), current_gun, surface, gun_bob, pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
-            total_ammo, reloading, channel_num, mouse_down, idle_dir, rot)
+            total_ammo, reloading, channel_num, mouse_down, idle_dir, rot, points)
 
         # Are we at a location to buy an item?
         points, map1 = door_prompt(pos_x, pos_y, surface, prompt_text, pygame.key.get_pressed(), points, map1)
@@ -179,8 +181,6 @@ def main(map1, number_of_enemies):
         # Displays frames per second
         fps = int(clock.get_fps()/2)
         pygame.display.set_caption("Aaron's Ray Casting Demo    Uncapped FPS = " + str(fps))
-
-        locate_zone((pos_x, pos_y), zone_map)  # Temporarily prints off the player's zone
 
 
 def title_screen(title_image, title_gradient, title_background, text_box, ticker):

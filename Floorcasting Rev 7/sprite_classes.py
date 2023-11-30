@@ -3,6 +3,7 @@ import pygame
 from numpy import deg2rad, dot
 import numpy
 from settings import *
+from maps import locate_zone
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -16,14 +17,15 @@ class Enemy(pygame.sprite.Sprite):
         self.image = self.SOURCE_IMAGE
         self.position = list(spawn_pos)
         self.health = 100
-        self.speed = 0.0
+        self.default_speed = 0.02
+        self.current_speed = 0.02
         self.enemy_screen_pos = [SCREEN_RES[0]/2, SCREEN_RES[1]/2]
         self.hitbox_width = self.SOURCE_IMAGE_RESOLUTION[0]
         self.screen_pos = [0, 0]
+        self.zone = 0
         print('Enemy class initialized')
 
-# Points directly towards the player and moves forward. Does not reference waypoints.
-    def move_to_player(self, player_x, player_y):
+    def point_and_seek(self, player_x, player_y):
         enemy_x = self.position[0]
         enemy_y = self.position[1]
         delta_x = player_x - enemy_x
@@ -31,20 +33,32 @@ class Enemy(pygame.sprite.Sprite):
         vector_magnitude = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)  # Pythagorean Theorem
         vector_to_player = [delta_x / vector_magnitude, delta_y / vector_magnitude]  # A unit vector
 
-        distance_moving = [self.speed * vector_to_player[0], self.speed * vector_to_player[1]]
+        distance_moving = [self.current_speed * vector_to_player[0], self.current_speed * vector_to_player[1]]
         self.position[0] += distance_moving[0]
         self.position[1] += distance_moving[1]
 
+    def move_to_zone(self, player_zone):
+        print(f"Current: {self.zone}\nDestination: {player_zone}")
 
-    def take_damage(self, damage_value):
+# Points directly towards the player and moves forward. Does not reference waypoints.
+    def move_to_player(self, player_x, player_y, player_zone, zone_map):
+        self.zone = locate_zone(self.position, zone_map)
+        if self.zone == player_zone:
+            self.point_and_seek(player_x, player_y)
+        else:
+            self.move_to_zone(player_zone)
+
+
+
+    def take_damage(self, damage_value, points):
         if self.screen_pos[0] < (SCREEN_RES[0]/2):
             if (self.screen_pos[0]+self.hitbox_width) > (SCREEN_RES[0]/2):
                 self.health -= damage_value
+                points += 50
                 print(self.health)
         if self.health <= 0:
             self.kill()
-        else:
-            return False  # Not Dead
+        return points
 
 
     def draw_enemy(self, surface, hres, rot, player_pos_y, player_pos_x, halfvres):
@@ -73,6 +87,9 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox_width = self.sprite_size[0]
         if self.sprite_size[1] > 1800:
             self.sprite_size = (900,1800)
+            self.current_speed = 0
+        else:
+            self.current_speed = self.default_speed
         self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
         self.screen_pos = (self.enemy_screen_pos[0] - self.image.get_width() / 2, self.enemy_screen_pos[1] - self.image.get_height() / 2 + y_adjust)
 
