@@ -26,6 +26,7 @@ AMMO_PISTOL_PRICE = 250
 
 # Gun Stats
 PISTOL_MAX_AMMO = 56
+damage_value = 15
 
 # Player Stats
 STARTING_POSITION = (36.2, 13.2)

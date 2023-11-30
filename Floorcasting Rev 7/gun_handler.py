@@ -42,6 +42,11 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
                     channel_num = 0
                 pygame.mixer.Channel(channel_num).play(pygame.mixer.Sound('sounds/pistol.mp3'))
                 pygame.mixer.Channel(20 + channel_num).play(pygame.mixer.Sound('sounds/brass.mp3'))
+
+                from mainProgram import enemies
+                for sprite in enemies:
+                    sprite.take_damage(damage_value)
+
             elif mag_ammo == 0 and shooting == 0 and reloading == 0 and not mouse_down:
                 if not pygame.mixer.Channel(14).get_busy():
                     pygame.mixer.Channel(14).play(pygame.mixer.Sound('sounds/empty.mp3'))

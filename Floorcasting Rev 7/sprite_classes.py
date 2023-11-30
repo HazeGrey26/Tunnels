@@ -8,17 +8,18 @@ from settings import *
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, spawn_pos, health):
         super().__init__()
-        self.SOURCE_IMAGE = pygame.image.load("images/spider_sprite.png").convert()
-        self.SOURCE_IMAGE_RESOLUTION = (1024, 496)
-        self.image_scale = 1  # Not Working
-        self.sprite_size = (int(self.SOURCE_IMAGE_RESOLUTION[0] * self.image_scale), int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
-        self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
-        self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
+        self.SOURCE_IMAGE = pygame.image.load("images/spider_sprite.png")#.convert()
+        self.SOURCE_IMAGE_RESOLUTION = (400, 800)
+        self.scale = 1.5
+        self.sprite_size = ()
+        #self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
+        self.image = self.SOURCE_IMAGE
         self.position = list(spawn_pos)
         self.health = 100
-        self.speed = 0.01
+        self.speed = 0.0
         self.enemy_screen_pos = [SCREEN_RES[0]/2, SCREEN_RES[1]/2]
-        self.rect = (200, (SCREEN_RES[1]/2)-(self.image.get_height()/2))
+        self.hitbox_width = self.SOURCE_IMAGE_RESOLUTION[0]
+        self.screen_pos = [0, 0]
         print('Enemy class initialized')
 
 # Points directly towards the player and moves forward. Does not reference waypoints.
@@ -35,10 +36,13 @@ class Enemy(pygame.sprite.Sprite):
         self.position[1] += distance_moving[1]
 
 
-    def take_damage(self, health, damage_value):
-        self.health -= damage_value
+    def take_damage(self, damage_value):
+        if self.screen_pos[0] < (SCREEN_RES[0]/2):
+            if (self.screen_pos[0]+self.hitbox_width) > (SCREEN_RES[0]/2):
+                self.health -= damage_value
+                print(self.health)
         if self.health <= 0:
-            return True  # Dead
+            self.kill()
         else:
             return False  # Not Dead
 
@@ -61,23 +65,26 @@ class Enemy(pygame.sprite.Sprite):
             angle_to_player = pi - asin(delta_y / distance_to_player)
         delta_angle = player_rot - angle_to_player  # This is where my sprite problem was
 
-        y_adjust = SCREEN_RES[1]/distance_to_player
+        y_adjust = self.SOURCE_IMAGE_RESOLUTION[0] * 0.8 / distance_to_player * (1/self.scale)
 
-        self.image_scale = abs(1 / (((delta_x**2 + delta_y**2)**(1/2))))   # This is a test
+        self.image_scale = abs(self.scale / (((delta_x**2 + delta_y**2)**(1/2))))   # This is a test
         self.sprite_size = (int(self.SOURCE_IMAGE_RESOLUTION[0] * self.image_scale),
                             int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
+        self.hitbox_width = self.sprite_size[0]
+        if self.sprite_size[1] > 1800:
+            self.sprite_size = (900,1800)
         self.image = pygame.transform.scale(self.SOURCE_IMAGE, self.sprite_size)
-        screen_pos = (self.enemy_screen_pos[0] - self.image.get_width() / 2, self.enemy_screen_pos[1] - self.image.get_height() / 2 + y_adjust)
+        self.screen_pos = (self.enemy_screen_pos[0] - self.image.get_width() / 2, self.enemy_screen_pos[1] - self.image.get_height() / 2 + y_adjust)
 
         if delta_angle < 0:
             screen_shift = -(-delta_angle - pi)/fov  # Where the enemy will be drawn on screen (negative = left, positive = right)
         else:
             screen_shift = (delta_angle - pi) / fov
         # Shifts the enemies y-position on screen according to angle_to_screen
-        screen_pos = (screen_pos[0] + screen_shift * (SCREEN_RES[0]/2), screen_pos[1])
+        self.screen_pos = (self.screen_pos[0] + screen_shift * (SCREEN_RES[0]/2), self.screen_pos[1])
 
         if angle_between_vectors > 5/6:  # Ensures the enemy is drawn only when the player can see it
-            surface.blit(self.image, screen_pos)  # Draws the enemy on screen
+            surface.blit(self.image, self.screen_pos)  # Draws the enemy on screen
 
 
 enemies = pygame.sprite.Group()
