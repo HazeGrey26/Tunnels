@@ -4,7 +4,7 @@ mouse_down = False
 
 
 def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, mag_ammo, total_ammo, reloading,
-             channel_num, mouse_down, idle_dir, rot, points):
+             channel_num, mouse_down, idle_dir, rot, points, number_killed, number_of_enemies):
     # Applies an idle animation to the gun
     if gun_bob == 0:
         if abs(idle_anim) <= 14:
@@ -45,7 +45,8 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
 
                 from mainProgram import enemies
                 for sprite in enemies:
-                    points = sprite.take_damage(damage_value, points)
+                    points, number_killed, number_of_enemies = sprite.take_damage(damage_value, points, number_killed,
+                                                                                  number_of_enemies)
 
             elif mag_ammo == 0 and shooting == 0 and reloading == 0 and not mouse_down:
                 if not pygame.mixer.Channel(14).get_busy():
@@ -180,4 +181,5 @@ def gun_draw(timer, current_gun, surface, gun_bob, keys, idle_anim, shooting, ma
             total_ammo = total_ammo + (mag_ammo - 7)
             mag_ammo = 7
 
-    return current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points
+    return (current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points,
+            number_killed, number_of_enemies)

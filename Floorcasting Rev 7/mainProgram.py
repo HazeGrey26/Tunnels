@@ -53,7 +53,7 @@ def main(map1, number_of_enemies):
     clock = pygame.time.Clock()
 
     mod = hres / FIELD_OF_VIEW  # Scales to a 60 degrees field of view
-    pos_x, pos_y, rot = STARTING_POSITION[0], STARTING_POSITION[1], 0  # Sets player's starting position to avoid collisions and rotation to zero
+    pos_x, pos_y, rot = STARTING_POSITION[0], STARTING_POSITION[1], pi/2  # Sets player's starting position to avoid collisions and rotation to zero
     
     # Audio files
     pygame.mixer.set_num_channels(99)
@@ -105,12 +105,21 @@ def main(map1, number_of_enemies):
 
     pygame.mouse.set_visible(False)  # Hides the mouse
 
+    areas_open = 1
+    wave = 1
+    number_killed = 0
+
     while running:
         milliseconds = timer() * 1000
 
+        if number_killed > wave:
+            wave += 1
+            number_killed = 0
+            print(f"Wave {wave}")
+
         # Spawns in enemies
-        if number_of_enemies < 1:
-            enemies.add(Enemy((31.2, 13.2), WEAK_ENEMY_HEALTH))
+        if number_of_enemies < wave:
+            enemies.add(Enemy(areas_open, wave))
             number_of_enemies += 1
             print('Enemy spawned')
 
@@ -153,12 +162,14 @@ def main(map1, number_of_enemies):
             sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
 
         # Draws the gun
-        current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points = gun_draw(
-            clock.tick(), current_gun, surface, gun_bob, pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
-            total_ammo, reloading, channel_num, mouse_down, idle_dir, rot, points)
+        (current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points,
+         number_killed, number_of_enemies) = gun_draw(clock.tick(), current_gun, surface, gun_bob,
+                                                      pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
+                                                      total_ammo, reloading, channel_num, mouse_down, idle_dir, rot,
+                                                      points, number_killed, number_of_enemies)
 
         # Are we at a location to buy an item?
-        points, map1 = door_prompt(pos_x, pos_y, surface, prompt_text, pygame.key.get_pressed(), points, map1)
+        points, map1, areas_open, mag_ammo, total_ammo = door_prompt(pos_x, pos_y, surface, prompt_text, pygame.key.get_pressed(), points, map1, areas_open, mag_ammo, total_ammo)
 
         # Displays the game HUD
         points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),

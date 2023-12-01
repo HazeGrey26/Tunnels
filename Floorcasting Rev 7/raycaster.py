@@ -44,16 +44,18 @@ def new_frame(frame, pos_y, pos_x, rot, mod, hres, current_map, halfvres, floor,
             if frame_y < 0:
                 frame_y = 0
 
-            if current_map[int(x)][int(y)] == 1:  # Checks if the maph contains a brick(1) or wall(2) texture
+            if current_map[int(x)][int(y)] == 1:  # Checks the maph texture
                 if halfvres - h + k >= 0 and halfvres - h + k < 2*halfvres:
                     frame[i][frame_y] = shade*WALL_BRICK[xx][int(yy[k])]/255
-            elif current_map[int(x)][int(y)] == 2:  # Checks if the maph contains a brick(1) or wall(2) texture
+            elif current_map[int(x)][int(y)] == 2:
                 if halfvres - h + k >= 0 and halfvres - h + k < 2*halfvres:
                     frame[i][frame_y] = shade*WALL_HOLE[xx][int(yy[k])]/255
-            elif current_map[int(x)][int(y)] == 3:  # Checks if the maph contains a brick(1) or wall(2) texture
+            elif current_map[int(x)][int(y)] == 3:
                 if halfvres - h + k >= 0 and halfvres - h + k < 2*halfvres:
                     frame[i][frame_y] = shade*WALL_BARS[xx][int(yy[k])]/255
-
+            elif current_map[int(x)][int(y)] == 4:
+                if halfvres - h + k >= 0 and halfvres - h + k < 2*halfvres:
+                    frame[i][frame_y] = shade*WALL_GUN[xx][int(yy[k])]/255
             elif current_map[int(x)][int(y)] != 0:
                 if halfvres - h + k >= 0 and halfvres - h + k < 2*halfvres:
                     frame[i][frame_y] = shade*WALL_ERROR[xx][int(yy[k])]/255

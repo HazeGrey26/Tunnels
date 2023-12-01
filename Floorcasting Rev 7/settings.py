@@ -25,7 +25,7 @@ FLOOR_SCALE = 1.5  # Sets the scale of your rendered floor texture
 AMMO_PISTOL_PRICE = 250
 
 # Gun Stats
-PISTOL_MAX_AMMO = 56
+PISTOL_MAX_AMMO = 105
 damage_value = 15
 
 # Player Stats

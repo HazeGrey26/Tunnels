@@ -25,6 +25,8 @@ def generate_map():
                 row_of_pixels.append(0)
             if pix[x, y] == 12:
                 row_of_pixels.append(2)
+            if pix[x, y] == 1:
+                row_of_pixels.append(4)
         map.append(row_of_pixels)
 
     map1 = numpy.array((
@@ -47,6 +49,43 @@ def generate_map():
     print(door_locations)
 
     return map1, door_locations
+
+
+def generate_spawns():
+    im = Image.open('map_info/spawnSimple.bmp')
+    pix = im.load()
+    image_size = im.size  # Get the width and height of the image
+    map = []
+    for y in range(image_size[1]):
+        row_of_pixels = []
+        for x in range(image_size[0]):
+            if pix[x, y] == 0:
+                row_of_pixels.append(0)
+            if pix[x, y] == 15:
+                row_of_pixels.append(1)
+        map.append(row_of_pixels)
+
+    spawn_map = numpy.array((
+    map[0], map[1], map[2], map[3], map[4], map[5], map[6], map[7], map[8], map[9], map[10], map[11],
+    map[12], map[13], map[14], map[15], map[16], map[17], map[18], map[19], map[20], map[21], map[22],
+    map[23], map[24], map[25], map[26], map[27]))
+
+    # [x_pox, y_pos]
+    spawn_locations = []
+
+    row_num = 0
+    for row in spawn_map:
+        col_num = 0
+        for column in row:
+            if column == 1:
+                spawn_data = [col_num, row_num]
+                spawn_locations.append(spawn_data)
+            col_num += 1
+        row_num += 1
+    spawn_locations.sort(reverse=True)
+    print(spawn_locations)
+    return spawn_locations
+
 
 def generate_zones():
     im = Image.open('map_info/zonesSimple.bmp') # This is a 256-color bmp. Pixel vales go from 0 to 255.

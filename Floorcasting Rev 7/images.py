@@ -52,6 +52,10 @@ WALL_HOLE = pygame.image.load('images/wallHole.png').convert()
 WALL_HOLE.set_colorkey((0, 0, 0))
 WALL_HOLE = pygame.surfarray.array3d(WALL_HOLE)
 
+WALL_GUN = pygame.image.load('images/wallGun.png').convert()
+WALL_GUN.set_colorkey((0, 0, 0))
+WALL_GUN = pygame.surfarray.array3d(WALL_GUN)
+
 WALL_BARS = pygame.image.load('images/bars.png').convert()
 WALL_BARS.set_colorkey((0, 0, 0))
 WALL_BARS = pygame.surfarray.array3d(WALL_BARS)

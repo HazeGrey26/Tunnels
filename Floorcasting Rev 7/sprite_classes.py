@@ -1,22 +1,32 @@
+import random
 from math import pi, asin, cos, sin
 import pygame
 from numpy import deg2rad, dot
 import numpy
 from settings import *
-from maps import locate_zone
-
+from maps import locate_zone, generate_spawns
+import random
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, spawn_pos, health):
+    def __init__(self, areas_open, wave):
         super().__init__()
         self.SOURCE_IMAGE = pygame.image.load("images/spider_sprite.png")#.convert()
         self.SOURCE_IMAGE_RESOLUTION = (400, 800)
         self.scale = 1.5
+        self.spawn_list = generate_spawns()
+        if areas_open == 4:
+            number = random.randint(0, 4)
+        elif areas_open == 3:
+            number = random.randint(0, 4)
+        elif areas_open == 2:
+            number = random.randint(0, 2)
+        else:
+            number = 0
+        self.position = self.spawn_list[number]
         self.sprite_size = ()
         #self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
         self.image = self.SOURCE_IMAGE
-        self.position = list(spawn_pos)
-        self.health = 100
+        self.health = wave * damage_value
         self.default_speed = 0.02
         self.current_speed = 0.02
         self.enemy_screen_pos = [SCREEN_RES[0]/2, SCREEN_RES[1]/2]
@@ -24,7 +34,6 @@ class Enemy(pygame.sprite.Sprite):
         self.screen_pos = [0, 0]
         self.zone = 0
         self.destination = False
-        print('Enemy class initialized')
 
     # Points directly towards the player and moves forward. Does not reference waypoints.
     def point_and_seek(self):
@@ -61,21 +70,21 @@ class Enemy(pygame.sprite.Sprite):
         return
 
     def move_to_player(self, player_x, player_y, player_zone, zone_map):
-        print(f"Me: {self.zone}, Player: {player_zone}")
         self.zone = locate_zone(self.position, zone_map)
         self.generate_destination(player_zone, player_x, player_y)
         self.point_and_seek()
 
-
-    def take_damage(self, damage_value, points):
+    def take_damage(self, damage_value, points, number_killed, number_of_enemies):
         if self.screen_pos[0] < (SCREEN_RES[0]/2):
             if (self.screen_pos[0]+self.hitbox_width) > (SCREEN_RES[0]/2):
                 self.health -= damage_value
-                points += 50
-                print(self.health)
+                points += 10
         if self.health <= 0:
             self.kill()
-        return points
+            points += 50
+            number_killed += 1
+            number_of_enemies -= 1
+        return points, number_killed, number_of_enemies
 
 
     def draw_enemy(self, surface, hres, rot, player_pos_y, player_pos_x, halfvres):
@@ -103,7 +112,7 @@ class Enemy(pygame.sprite.Sprite):
                             int(self.SOURCE_IMAGE_RESOLUTION[1] * self.image_scale))
         self.hitbox_width = self.sprite_size[0]
         if self.sprite_size[1] > 1800:
-            self.sprite_size = (900,1800)
+            self.sprite_size = (900, 1800)
             self.current_speed = 0
         else:
             self.current_speed = self.default_speed
