@@ -10,7 +10,7 @@ def generate_map():
     # Color of wall = 0
     # Color of blank space = 0
     # Color of door = 15
-    im = Image.open('map_info/map.bmp')  # This is a 16-color bmp. Pixel vales go from 0 to 15.
+    im = Image.open('map_info/mapSimple.bmp')  # This is a 16-color bmp. Pixel vales go from 0 to 15.
     pix = im.load()
     image_size = im.size  # Get the width and height of the image
     map = []
@@ -49,7 +49,7 @@ def generate_map():
     return map1, door_locations
 
 def generate_zones():
-    im = Image.open('map_info/zones(256-colors).bmp') # This is a 256-color bmp. Pixel vales go from 0 to 255.
+    im = Image.open('map_info/zonesSimple.bmp') # This is a 256-color bmp. Pixel vales go from 0 to 255.
     pix = im.load()
     image_size = im.size  # Get the width and height of the image
     zones = []
@@ -104,8 +104,7 @@ def generate_zones():
 
 
 def generate_waypoints(zone_map):
-    waypoints = [(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(0,0),(2,8),
-                 (0,0),(2,1),(2,3),(0,0),(0,0),(0,0),(0,0),(0,0)]  # What zones each waypoint connects
+    waypoints = [(0,0),(0,0),(0,0)]  # What zones each waypoint connects
     waypoint_list = []
     number = 0
     counter = 0

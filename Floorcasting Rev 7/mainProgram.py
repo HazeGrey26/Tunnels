@@ -27,7 +27,7 @@ from purchase_handler import door_prompt
 # Make a round system like the survival night in RE7 (1 Boss, 1 Sub-Boss, Constantly Spawning Normal Enemies)
 # Use .convert() and blit to improve performance for all images without transparency
 # Add a posz and another map for multiple floors
-# Add angled imagesas to the sprite system
+# Add angled images to the sprite system
 # Make more than just 'Normal' difficulty
 # Add camera bob when walking and up/ down camera motion (BUGGED)
 # Make an enemy logic system
@@ -150,7 +150,7 @@ def main(map1, number_of_enemies):
         # Draws enemy sprites
         for sprite in enemies:
             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
-            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map, waypoint_list)
+            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
 
         # Draws the gun
         current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points = gun_draw(

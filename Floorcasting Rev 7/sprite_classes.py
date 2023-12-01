@@ -27,11 +27,11 @@ class Enemy(pygame.sprite.Sprite):
         print('Enemy class initialized')
 
     # Points directly towards the player and moves forward. Does not reference waypoints.
-    def point_and_seek(self, player_x, player_y):
+    def point_and_seek(self):
         enemy_x = self.position[0]
         enemy_y = self.position[1]
-        delta_x = player_x - enemy_x
-        delta_y = player_y - enemy_y
+        delta_x = self.destination[0] - enemy_x
+        delta_y = self.destination[1] - enemy_y
         vector_magnitude = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)  # Pythagorean Theorem
         vector_to_player = [delta_x / vector_magnitude, delta_y / vector_magnitude]  # A unit vector
 
@@ -39,39 +39,33 @@ class Enemy(pygame.sprite.Sprite):
         self.position[0] += distance_moving[0]
         self.position[1] += distance_moving[1]
 
-    def move_to_zone(self, player_zone, waypoint_list):
-        if round(self.destination[0] * 4) == round(self.position[0] * 4) and round(self.destination[1] * 4) == round(self.position[1] * 4):  # *4 makes it accurate to a fourth of a tile
-            self.destination = False
-            print("Destination reached!")
-        else:
-            self.point_and_seek(self.destination[0], self.destination[1])
-
-    def generate_destination(self, player_zone, waypoint_list):
+    def generate_destination(self, player_zone, player_x, player_y):
         self.destination = False
-        for waypoint in waypoint_list:
-            if waypoint[2][0] == self.zone and waypoint[2][1] == player_zone:
-                self.destination = (waypoint[1][0], waypoint[1][1])
-            if waypoint[2][0] == player_zone and waypoint[2][1] == self.zone:
-                self.destination = (waypoint[1][0], waypoint[1][1])
-        if self.destination == False:
-            return
-        if round(self.destination[0] * 4) == round(self.position[0] * 4) and round(self.destination[1] * 4) == round(
-                self.position[1] * 4):  # *4 makes it accurate to a fourth of a tile
-            self.destination = False
-
-    def move_to_player(self, player_x, player_y, player_zone, zone_map, waypoint_list):
-        self.zone = locate_zone(self.position, zone_map)
-        if player_zone != 15:  # If the player is not on a waypoint
+        if player_zone == self.zone:
+            self.destination = (player_x, player_y)
+        elif 13.3 < self.position[1] < 13.8:
             if player_zone == self.zone:
                 self.point_and_seek(player_x, player_y)
-                print("Point and seek!")
+                return
+            elif player_zone < self.zone:
+                self.destination = (99, 13.5)  # Goes to the right as far as possible
+                return
+            elif player_zone > self.zone:
+                self.destination = (0, 13.5)  # Goes to the left as far as possible
+                return
             else:
-                self.generate_destination(player_zone, waypoint_list)
-                if self.destination:
-                    self.move_to_zone(player_zone, waypoint_list)
-                    print(f"Moving to {self.destination}!")
-                else:
-                    self.point_and_seek(player_x, player_y)
+                self.destination = (player_x, player_y)
+                return
+        else:
+            self.destination = (self.position[0], 13.5)
+        return
+
+    def move_to_player(self, player_x, player_y, player_zone, zone_map):
+        print(f"Me: {self.zone}, Player: {player_zone}")
+        self.zone = locate_zone(self.position, zone_map)
+        self.generate_destination(player_zone, player_x, player_y)
+        self.point_and_seek()
+
 
     def take_damage(self, damage_value, points):
         if self.screen_pos[0] < (SCREEN_RES[0]/2):
