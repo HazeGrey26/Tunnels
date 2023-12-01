@@ -121,7 +121,6 @@ def main(map1, number_of_enemies):
         if number_of_enemies < wave:
             enemies.add(Enemy(areas_open, wave))
             number_of_enemies += 1
-            print('Enemy spawned')
 
         # Returns the pistol to the center
         if gun_bob <= GUN_BOB_AMOUNT:
@@ -156,8 +155,15 @@ def main(map1, number_of_enemies):
 
         player_zone = locate_zone((pos_x, pos_y), zone_map)  # Fetches the player's zone
 
-        # Draws enemy sprites
+        # Ensures that close enemies are blitted last
+        layer_list = []
         for sprite in enemies:
+            distance = sprite.get_distance(pos_x, pos_y)
+            layer_list.append((distance, sprite))
+        layer_list.sort(reverse=True)
+        # Draws enemy sprites
+        for item in layer_list:
+            sprite = item[1]
             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
             sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
 

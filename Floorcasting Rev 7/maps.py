@@ -46,8 +46,6 @@ def generate_map():
                 door_locations.append(door_data)
             col_num += 1
         row_num += 1
-    print(door_locations)
-
     return map1, door_locations
 
 
@@ -83,7 +81,6 @@ def generate_spawns():
             col_num += 1
         row_num += 1
     spawn_locations.sort(reverse=True)
-    print(spawn_locations)
     return spawn_locations
 
 
@@ -156,7 +153,6 @@ def generate_waypoints(zone_map):
                 counter += 1
             row += 1
         number += 1
-    print(waypoint_list)
     return waypoint_list  # List formatted as [(waypoint#, (x, y), (zone1, zone2), (), ...]
 
 
@@ -164,5 +160,4 @@ def locate_zone(position, zone_map):
     y = int(position[0])
     x = int(position[1])
     zone_number = zone_map[floor(x)][floor(y)]
-    #print(f"You are in zone {zone_number}.")
     return zone_number

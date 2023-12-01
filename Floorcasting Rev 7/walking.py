@@ -5,11 +5,6 @@ from settings import *
 
 
 def movement(posx, posy, rot, keys, timer, gun_bob, map1, vertical_angle):
-    if keys[ord('e')]:
-        vertical_angle += 5
-    elif keys[ord('q')]:
-        vertical_angle -= 5
-
     if keys[pygame.K_LEFT] or keys[ord('a')]:  # Detects if the 'a' or left arrow is pressed
         tempx = posx - numpy.cos(rot+pi/2) * PLAYER_SPEED * timer  # For collision avoidance
         tempy = posy - numpy.sin(rot+pi/2) * PLAYER_SPEED * timer  # For collision avoidance

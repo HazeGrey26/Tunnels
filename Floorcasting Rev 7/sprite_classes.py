@@ -43,7 +43,6 @@ class Enemy(pygame.sprite.Sprite):
         delta_y = self.destination[1] - enemy_y
         vector_magnitude = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)  # Pythagorean Theorem
         vector_to_player = [delta_x / vector_magnitude, delta_y / vector_magnitude]  # A unit vector
-
         distance_moving = [self.current_speed * vector_to_player[0], self.current_speed * vector_to_player[1]]
         self.position[0] += distance_moving[0]
         self.position[1] += distance_moving[1]
@@ -67,7 +66,18 @@ class Enemy(pygame.sprite.Sprite):
                 return
         else:
             self.destination = (self.position[0], 13.5)
+
+        kill_radius = 0.8
+        if (player_x - kill_radius) < self.position[0] < (player_x + kill_radius) and (player_y - kill_radius) < self.position[1] < (player_y + kill_radius):
+            print("Hitting player")
+
         return
+
+    def get_distance(self, enemy_x, enemy_y):
+        delta_x = self.position[0] - enemy_x
+        delta_y = self.position[1] - enemy_y
+        vector_magnitude = (delta_x ** 2 + delta_y ** 2) ** (1 / 2)
+        return vector_magnitude
 
     def move_to_player(self, player_x, player_y, player_zone, zone_map):
         self.zone = locate_zone(self.position, zone_map)

@@ -88,6 +88,7 @@ health_ring_title = pygame.image.load('images/healthRingTitle.png')
 title_gradient = pygame.image.load('images/titleScreen.png')
 title_background = pygame.image.load('images/titleBackground.png')
 text_box = pygame.image.load('images/textBox.png')
+blood = pygame.image.load('images/blood.png')
 
 # Loads a game icon
 icon = pygame.image.load('images/healthRing.png')
