@@ -18,7 +18,7 @@ def damage_function(player_damage, player_health, surface, screen):
 
 
 def death_screen(surface, screen):
-    death = True
+    death = 1
     hud_text = pygame.font.SysFont('agencyfb', 45)
     pygame.mouse.set_visible(True)  # Shows the mouse cursor
     pause = True

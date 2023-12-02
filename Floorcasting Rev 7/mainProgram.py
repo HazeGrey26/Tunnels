@@ -142,7 +142,7 @@ def main(map1, number_of_enemies):
         # Starts pause screen
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
             pause = True
-            death = False
+            death = 0
             pygame.mouse.set_visible(True)  # Shows the mouse cursor
             while pause:
                 running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES, death)
