@@ -14,6 +14,7 @@ from maps import *
 from gun_handler import *
 from hud_handler import *
 from sprite_classes import *
+from health_handler import *
 map1, door_locations = generate_map()
 zone_map = generate_zones()
 waypoint_list = generate_waypoints(zone_map)
@@ -70,6 +71,7 @@ def main(map1, number_of_enemies):
     total_ammo = 21  # Total ammo the player has outside the magazine
     reloading = 0  # Is the player trying to reload?
     vertical_angle = 0  # The up and down angle of the player's camera
+    player_health = DEFAULT_HEALTH
     click_reset = True
     mouse_down = False
 
@@ -140,14 +142,10 @@ def main(map1, number_of_enemies):
         # Starts pause screen
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
             pause = True
+            death = False
             pygame.mouse.set_visible(True)  # Shows the mouse cursor
             while pause:
-                if set_update:
-                    running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES)
-                else:
-                    running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES)
-                set_update = True
-                frame_update = True
+                running, pause = pause_screen(pause, title_background, title_gradient, health_ring_title, text_box, ticker, screen, hud_text, SCREEN_RES, death)
             pygame.mouse.set_visible(False)  # Hides the mouse cursor
 
         # Fetches the player position and rotation from the movement function
@@ -162,10 +160,19 @@ def main(map1, number_of_enemies):
             layer_list.append((distance, sprite))
         layer_list.sort(reverse=True)
         # Draws enemy sprites
+
+        player_damage = 0
         for item in layer_list:
             sprite = item[1]
             sprite.draw_enemy(surface, hres, rot, pos_y, pos_x, halfvres)
-            sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
+            temp_damage = sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
+            if temp_damage:
+                player_damage += temp_damage
+
+        temp_health = damage_function(player_damage, player_health, surface, screen)
+        player_health = temp_health
+        if player_health < DEFAULT_HEALTH:
+            surface.blit(blood, (0, 0))
 
         # Draws the gun
         (current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points,
@@ -181,11 +188,15 @@ def main(map1, number_of_enemies):
         points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
             clock.tick(), mag_ammo, total_ammo, health_ring, pos_y, pos_x, points)
 
-        # Caps the up and down angle of the player's camera
-        if vertical_angle < -50:
-            vertical_angle = -50
-        elif vertical_angle > 50:
-            vertical_angle = 50
+        if player_health >= DEFAULT_HEALTH:
+            # Draws health bar
+            surface.blit(health_ring, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))
+        elif player_health >= DEFAULT_HEALTH * 0.65:
+            surface.blit(health_ring1, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))
+        elif player_health >= DEFAULT_HEALTH * 0.45:
+            surface.blit(health_ring2, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))
+        else:
+            surface.blit(health_ring3, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))
         
         # Sets the frame timing for a capped fps
         fps_delay = (1000/TARGET_FPS - (timer() * 1000 - milliseconds))/1000

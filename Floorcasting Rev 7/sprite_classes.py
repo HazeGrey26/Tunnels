@@ -24,7 +24,9 @@ class Enemy(pygame.sprite.Sprite):
             number = 0
         self.position = self.spawn_list[number]
         self.sprite_size = ()
-        #self.SOURCE_IMAGE.set_colorkey((0, 0, 0))
+        self.hit_frequency = 50
+        self.hit_counter = self.hit_frequency + 1
+        self.damage = 25
         self.image = self.SOURCE_IMAGE
         self.health = wave * damage_value
         self.default_speed = 0.02
@@ -69,9 +71,16 @@ class Enemy(pygame.sprite.Sprite):
 
         kill_radius = 0.8
         if (player_x - kill_radius) < self.position[0] < (player_x + kill_radius) and (player_y - kill_radius) < self.position[1] < (player_y + kill_radius):
-            print("Hitting player")
-
-        return
+            if self.hit_counter > self.hit_frequency:
+                print("Hitting player")
+                player_damage = self.damage
+                self.hit_counter = 0
+            else:
+                self.hit_counter += 1
+                player_damage = 0
+        else:
+            player_damage = 0
+        return player_damage
 
     def get_distance(self, enemy_x, enemy_y):
         delta_x = self.position[0] - enemy_x
@@ -81,8 +90,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def move_to_player(self, player_x, player_y, player_zone, zone_map):
         self.zone = locate_zone(self.position, zone_map)
-        self.generate_destination(player_zone, player_x, player_y)
+        player_damage = self.generate_destination(player_zone, player_x, player_y)
         self.point_and_seek()
+        return player_damage
 
     def take_damage(self, damage_value, points, number_killed, number_of_enemies):
         if self.screen_pos[0] < (SCREEN_RES[0]/2):

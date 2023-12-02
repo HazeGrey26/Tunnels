@@ -84,11 +84,15 @@ crosshair_size = 35
 crosshair = pygame.transform.scale(crosshair, (crosshair_size, crosshair_size))
 
 health_ring = pygame.image.load('images/healthRing.png')
+health_ring1 = pygame.image.load('images/healthRing1.png')
+health_ring2 = pygame.image.load('images/healthRing2.png')
+health_ring3 = pygame.image.load('images/healthRing3.png')
 health_ring_title = pygame.image.load('images/healthRingTitle.png')
 title_gradient = pygame.image.load('images/titleScreen.png')
 title_background = pygame.image.load('images/titleBackground.png')
 text_box = pygame.image.load('images/textBox.png')
-blood = pygame.image.load('images/blood.png')
+blood = pygame.image.load('images/blood.png').convert()
+blood.set_colorkey((0, 0, 0))
 
 # Loads a game icon
 icon = pygame.image.load('images/healthRing.png')

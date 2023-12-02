@@ -33,9 +33,6 @@ def hud(surface, gun_bob, crosshair, crosshair_size, keys, timer, mag_ammo, tota
     surface.blit(point_text.render(f'{points}', False, (10, 10, 10)), (SCREEN_RES[0] - 93, SCREEN_RES[1] - 208))
     surface.blit(point_text.render(f'{points}', False, (150, 25, 25)), (SCREEN_RES[0] - 95, SCREEN_RES[1] - 210))
 
-    # Draws health bar
-    surface.blit(health_ring, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))
-
     # Black bars at the top and bottom of the screen
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, SCREEN_RES[0], 100))
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, SCREEN_RES[1] - 100, SCREEN_RES[0], 100))
