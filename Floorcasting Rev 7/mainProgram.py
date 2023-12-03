@@ -158,9 +158,13 @@ def main(map1, number_of_enemies):
         for sprite in enemies:
             distance = sprite.get_distance(pos_x, pos_y)
             layer_list.append((distance, sprite))
-        layer_list.sort(reverse=True)
-        # Draws enemy sprites
+        try:
+            layer_list.sort(reverse=True)
+        except:
+            # Sometimes .sort fails because two enemies have the exact same distance from the player
+            print("Caught Exception")
 
+        # Calculates damage taken by the player
         player_damage = 0
         for item in layer_list:
             sprite = item[1]
@@ -168,7 +172,6 @@ def main(map1, number_of_enemies):
             temp_damage = sprite.move_to_player(pos_x, pos_y, player_zone, zone_map)
             if temp_damage:
                 player_damage += temp_damage
-
         temp_health = damage_function(player_damage, player_health, surface, screen)
         player_health = temp_health
         if player_health < DEFAULT_HEALTH:
@@ -178,9 +181,7 @@ def main(map1, number_of_enemies):
         (current_gun, shooting, mag_ammo, total_ammo, reloading, channel_num, idle_anim, idle_dir, rot, points,
          number_killed, number_of_enemies) = gun_draw(clock.tick(), current_gun, surface, gun_bob,
                                                       pygame.key.get_pressed(), idle_anim, shooting, mag_ammo,
-                                                      total_ammo, reloading, channel_num, mouse_down, idle_dir, rot,
-                                                      points, number_killed, number_of_enemies)
-
+                                                      total_ammo, reloading, channel_num, mouse_down, idle_dir, rot,                                                  points, number_killed, number_of_enemies)
         # Are we at a location to buy an item?
         points, map1, areas_open, mag_ammo, total_ammo = door_prompt(pos_x, pos_y, surface, prompt_text, pygame.key.get_pressed(), points, map1, areas_open, mag_ammo, total_ammo)
 
@@ -188,6 +189,7 @@ def main(map1, number_of_enemies):
         points, total_ammo = hud(surface, gun_bob, crosshair, crosshair_size, pygame.key.get_pressed(),
             clock.tick(), mag_ammo, total_ammo, health_ring, pos_y, pos_x, points)
 
+        # Alters the health indicator based on the player's current health value
         if player_health >= DEFAULT_HEALTH:
             # Draws health bar
             surface.blit(health_ring, (0, 0), (-SCREEN_RES[0] + 60, -SCREEN_RES[1] + 152, SCREEN_RES[0], SCREEN_RES[1]))

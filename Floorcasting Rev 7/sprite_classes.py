@@ -28,8 +28,8 @@ class Enemy(pygame.sprite.Sprite):
         self.hit_counter = self.hit_frequency + 1
         self.damage = 25
         self.image = self.SOURCE_IMAGE
-        self.health = wave * damage_value
-        self.default_speed = 0.02
+        self.health = wave * damage_value + random.randint(0, 3) * damage_value
+        self.default_speed = 0.02 + 0.005 * random.randint(0, 3)
         self.current_speed = self.default_speed
         self.enemy_screen_pos = [SCREEN_RES[0]/2, SCREEN_RES[1]/2]
         self.hitbox_width = self.SOURCE_IMAGE_RESOLUTION[0]
