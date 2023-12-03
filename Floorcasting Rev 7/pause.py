@@ -12,7 +12,7 @@ def pause_screen(pause, title_background, title_gradient, title_image, text_box,
     screen.blit(title_image, (0, 0), (40, 65, 1024, 768))
     screen.blit(text_box, (0, 0), (90, 0, 1024, 768))
 
-    if death == 1:
+    if death == 0:
         screen.blit(hud_text.render('PAUSED', False, (100, 10, 10)), (160, 10))
         if 50 < mouse[0] < 360 and 430 < mouse[1] < 500:
             ticker = True
