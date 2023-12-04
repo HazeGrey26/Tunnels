@@ -20,24 +20,6 @@ zone_map = generate_zones()
 waypoint_list = generate_waypoints(zone_map)
 from purchase_handler import door_prompt
 
-# TODO
-# When total ammo > 7 ammo is deleted when reloading BUGGED
-# Sounds bugs out when moving diagonally, left, or right
-# Make a sound handler
-# You move faster when you strafe? Remove this
-# Make a round system like the survival night in RE7 (1 Boss, 1 Sub-Boss, Constantly Spawning Normal Enemies)
-# Use .convert() and blit to improve performance for all images without transparency
-# Add a posz and another map for multiple floors
-# Add angled images to the sprite system
-# Make more than just 'Normal' difficulty
-# Add camera bob when walking and up/ down camera motion (BUGGED)
-# Make an enemy logic system
-# Add multiple weapons
-# Add an inventory and weapon selector GUI
-# Add a door-buying system
-# Add points for shooting enemies
-# Shadows/Specular Textures???
-
 pygame.init()
 running = True
 
