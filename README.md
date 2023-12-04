@@ -1,5 +1,5 @@
 # Tunnels
-A raycaster fps written in Python
+A raycaster first-person-shooter written in Python
 
 Anticipated Points - 40 Points:
 
